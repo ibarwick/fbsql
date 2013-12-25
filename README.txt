@@ -37,11 +37,14 @@ Usage
 
 
     $ fbsql --help
-    fbsql 0.03
     fbsql is an interactive terminal for Firebird.
 
     Usage:
-     fbsql [OPTION]... [DBNAME [USERNAME]]
+      fbsql [OPTION]... [DBNAME [USERNAME]]
+
+    General options:
+      -V, --version            output version information, then exit
+      -?, --help               show this help, then exit
 
     Connection options:
       -d, --dbname=DBNAME      database to connect to

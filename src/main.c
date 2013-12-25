@@ -34,6 +34,7 @@ fbsqlSettings fset;
 /* Internal helper functions */
 static void parse_fbsql_options(int argc, char *argv[]);
 static void usage(void);
+static void show_version(void);
 
 
 /**
@@ -51,9 +52,9 @@ main(int argc, char *argv[])
     /* initialise readline/history */
     init_readline();
 
-    printf("fbsql %s\n", FBSQL_VERSION);
-
     parse_fbsql_options(argc, argv);
+
+    printf("fbsql %s\n", FBSQL_VERSION);
 
     /* The Firebird library will pick up the ISC_* variables by itself, but
      * let's handle them here so we can display explicit warnings if a
@@ -112,7 +113,7 @@ main(int argc, char *argv[])
  *
  * Parse command line options
  */
-static void
+void
 parse_fbsql_options(int argc, char *argv[])
 {
     static struct option long_options[] =
@@ -122,6 +123,7 @@ parse_fbsql_options(int argc, char *argv[])
         {"username", required_argument, NULL, 'u'},
         {"password", required_argument, NULL, 'p'},
         {"help", no_argument, NULL, '?'},
+        {"version", no_argument, NULL, 'V'},
         {NULL, 0, NULL, 0}
     };
 
@@ -130,7 +132,7 @@ parse_fbsql_options(int argc, char *argv[])
     extern int  optind;
     int         c;
 
-    while ((c = getopt_long(argc, argv, "d:Eu:p:?",
+    while ((c = getopt_long(argc, argv, "d:Eu:p:?V",
                             long_options, &optindex)) != -1)
     {
 
@@ -153,8 +155,12 @@ parse_fbsql_options(int argc, char *argv[])
                 break;
 
             case '?':
-              usage();
-              exit(0);
+                usage();
+                exit(0);
+
+            case 'V':
+                show_version();
+                exit(0);
         }
     }
 
@@ -175,11 +181,24 @@ parse_fbsql_options(int argc, char *argv[])
 
 
 /**
+ * show_version()
+ *
+ * Display version information
+ */
+
+void
+show_version(void)
+{
+    printf("fbsql (Firebird) %s\n", FBSQL_VERSION);
+}
+
+
+/**
  * usage()
  *
  * Show usage and command line options
  */
-static void
+void
 usage(void)
 {
     const char *username;
@@ -192,6 +211,11 @@ usage(void)
     printf("fbsql is an interactive terminal for Firebird.\n\n");
     printf("Usage:\n");
     printf(" fbsql [OPTION]... [DBNAME [USERNAME]]\n\n");
+
+    printf("General options:\n");
+    printf("  -V, --version            output version information, then exit\n");
+    printf("  -?, --help               show this help, then exit\n");
+    printf("\n");
 
     printf("Connection options:\n");
 
