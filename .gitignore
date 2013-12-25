@@ -1,0 +1,12 @@
+fbsql
+*.o
+*~
+.#*
+*dSYM*
+.deps
+*.swp
+/autom4te.cache
+/src/fbsqlscan.c
+/config.log
+/config.status
+Makefile
