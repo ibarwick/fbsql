@@ -36,7 +36,6 @@ static void showUsage(void);
 
 void describeObject(char *name);
 void _describeTable(char *name, char *object_type, char *query);
-void _describeTableParam(char *name, char *object_type, char *query, int nParams, const char * const *paramValues);
 
 void describeTable(char *name);
 void describeView(char *name);
@@ -774,11 +773,12 @@ _describeTable(char *name, char *object_type, char *query)
     free(pqopt.header);
 }
 
-void
-_describeTableParam(char *name, char *object_type, char *query, int nParams, const char * const *paramValues)
-{
-}
 
+/**
+ * describeTable()
+ *
+ * \d table_name
+ */
 void
 describeTable(char *name)
 {
@@ -1011,7 +1011,6 @@ describeIndex(char *name)
     FQresult   *query_result;
     FQExpBufferData buf;
 
-
     /* Display field information */
 
     initFQExpBuffer(&buf);
@@ -1053,7 +1052,6 @@ describeIndex(char *name)
 "       WHERE LOWER(i.rdb$index_name) = LOWER('%s')\n",
                       name
         );
-
 
     query_result = commandExec(buf.data);
     termFQExpBuffer(&buf);
@@ -1134,17 +1132,13 @@ listDatabaseInfo(void)
     commandExecPrint(query, &pqopt);
 }
 
-/* \util [command] */
 
+/* \util [command] */
 static bool
 execUtil(char *command)
 {
     if(strncmp(command, "set_index_statistics", 20) == 0)
-    {
         return _execUtilSetIndexStatistics();
-    }
-
-    puts(command);
 
     printf("Unknown \\util option \"%s\"\n",
            command
