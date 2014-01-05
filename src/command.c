@@ -34,22 +34,22 @@ static void commandExecPrint(const char *query, const printQueryOpt *pqopt);
 
 static void showUsage(void);
 
-void describeObject(char *name);
-void _describeTable(char *name, char *object_type, char *query);
+static void describeObject(char *name);
+static void _describeTable(char *name, char *object_type, char *query);
 
-void describeTable(char *name);
-void describeView(char *name);
-void describeIndex(char *name);
+static void describeTable(char *name);
+static void describeView(char *name);
+static void describeIndex(char *name);
 
 static bool execUtil(char *command);
 static bool _execUtilSetIndexStatistics(void);
 
 static void listDatabaseInfo(void);
 static void listFunctions(char *pattern);
-static void listIndexes(char *pattern, bool extended);
+static void listIndexes(char *pattern, bool show_system, bool show_extended);
 static void listProcedures(char *pattern);
-static void listSequences(char *pattern);
-static void listTables(char *pattern);
+static void listSequences(char *pattern, bool show_system);
+static void listTables(char *pattern, bool show_system);
 static void listUsers(void);
 static void listViews(char *pattern);
 
@@ -163,6 +163,10 @@ execSlashCommand(const char *cmd,
 {
     bool        success = true;
     backslashResult status = FBSQL_CMD_SKIP_LINE;
+    bool show_extended, show_system;
+
+    show_extended = strchr(cmd, '+') ? true : false;
+    show_system = strchr(cmd, 'S') ? true : false;
 
     if(strncmp(cmd, "q", 1) == 0)
     {
@@ -241,16 +245,12 @@ execSlashCommand(const char *cmd,
 
     else if(strncmp(cmd, "di", 2) == 0)
     {
-        bool extended = false;
 
-
-        if(strncmp(cmd, "di+", 3) == 0)
-            extended = true;
 
         char *opt0 = fbsql_scan_slash_option(scan_state,
                                              OT_NORMAL, NULL, false);
 
-        listIndexes(opt0, extended);
+        listIndexes(opt0, show_system, show_extended);
 
         free(opt0);
     }
@@ -271,7 +271,7 @@ execSlashCommand(const char *cmd,
         char *opt0 = fbsql_scan_slash_option(scan_state,
                                              OT_NORMAL, NULL, false);
 
-        listSequences(opt0);
+        listSequences(opt0, show_system);
 
         free(opt0);
     }
@@ -281,7 +281,7 @@ execSlashCommand(const char *cmd,
         char *opt0 = fbsql_scan_slash_option(scan_state,
                                              OT_NORMAL, NULL, false);
 
-        listTables(opt0);
+        listTables(opt0, show_system);
 
         free(opt0);
     }
@@ -662,20 +662,19 @@ showUsage(void)
     printf("\n");
 
     printf("Database\n");
+    printf("  (options: S = show system objects, + = additional detail)\n");
     printf("  \\l                     List information about the current database\n");
     printf("  \\autocommit            Toggle autocommit (currently %s)\n",
            fset.autocommit ? "on" : "off");
-    printf("  \\d  NAME               List information about the specified object\n");
-    printf("  \\df [PATTERN]          List information about functions matching [PATTERN]\n");
-
-    printf("  \\di [PATTERN]          List information about indexes matching [PATTERN]\n");
-    printf("  \\dp [PATTERN]          List information about procedures matching [PATTERN]\n");
-    printf("  \\ds [PATTERN]          List information about sequences (generators) matching [PATTERN]\n");
-
-    printf("  \\dt [PATTERN]          List information about tables matching [PATTERN]\n");
+    printf("  \\d      NAME           List information about the specified object\n");
+    printf("  \\df     [PATTERN]      List information about functions matching [PATTERN]\n");
+    printf("  \\di[S+] [PATTERN]      List information about indexes matching [PATTERN]\n");
+    printf("  \\dp     [PATTERN]      List information about procedures matching [PATTERN]\n");
+    printf("  \\ds[S]  [PATTERN]      List information about sequences (generators) matching [PATTERN]\n");
+    printf("  \\dt[S]  [PATTERN]      List information about tables matching [PATTERN]\n");
     printf("  \\du                    List users granted privileges on this database\n");
-    printf("  \\dv [PATTERN]          List information about views matching [PATTERN]\n");
-    printf("  \\util [COMMAND]        execute utility command\n");
+    printf("  \\dv     [PATTERN]      List information about views matching [PATTERN]\n");
+    printf("  \\util   [COMMAND]      execute utility command\n");
     printf("                           {set_index_statistics}\n");
 }
 
@@ -1211,7 +1210,7 @@ listFunctions(char *pattern)
 /* \di */
 
 static void
-listIndexes(char *pattern, bool extended)
+listIndexes(char *pattern, bool show_system, bool show_extended)
 {
     FQExpBufferData buf;
     printQueryOpt pqopt = fset.popt;
@@ -1225,20 +1224,22 @@ listIndexes(char *pattern, bool extended)
 "          COALESCE(CAST(rdb$description AS VARCHAR(80)), '') AS \"Description\"  \n"
         );
 
-    if(extended == true)
+    if(show_extended == true)
         appendFQExpBuffer(&buf,
 "        , rdb$statistics AS \"Statistics\" \n"
             );
 
     appendFQExpBuffer(&buf,
 "     FROM rdb$indices  \n"
-"    WHERE rdb$system_flag = 0  \n"
+"    WHERE 1 = 1"
         );
 
     if(pattern != NULL)
-    {
         _wildcard_pattern_clause(pattern, "rdb$index_name", &buf);
-    }
+    else if(show_system == false)
+        appendFQExpBuffer(&buf,
+"      AND rdb$system_flag = 0 \n"
+            );
 
     appendFQExpBuffer(&buf,
                       " ORDER BY 1"
@@ -1248,6 +1249,7 @@ listIndexes(char *pattern, bool extended)
 
     termFQExpBuffer(&buf);
 }
+
 
 /* \dp */
 static void
@@ -1270,13 +1272,11 @@ listProcedures(char *pattern)
 "          END AS \"Type\", \n"
 "          COALESCE(CAST(rdb$description AS VARCHAR(80)), '') AS \"Description\"  \n"
 "     FROM rdb$procedures  \n"
-"    WHERE rdb$system_flag = 0 \n"
+"    WHERE 1 = 1\n"
         );
 
     if(pattern != NULL)
-    {
         _wildcard_pattern_clause(pattern, "rdb$procedure_name", &buf);
-    }
 
     appendFQExpBuffer(&buf,
 "  ORDER BY 1"
@@ -1290,7 +1290,7 @@ listProcedures(char *pattern)
 
 /* \ds */
 static void
-listSequences(char *pattern)
+listSequences(char *pattern, bool show_system)
 {
     FQExpBufferData buf;
     printQueryOpt pqopt = fset.popt;
@@ -1303,13 +1303,15 @@ listSequences(char *pattern)
 "          rdb$generator_id AS \"Id\", \n"
 "          COALESCE(CAST(rdb$description AS VARCHAR(80)), '') AS \"Description\"  \n"
 "     FROM rdb$generators  \n"
-"    WHERE rdb$system_flag = 0 \n"
+"    WHERE 1 = 1\n"
         );
 
     if(pattern != NULL)
-    {
         _wildcard_pattern_clause(pattern, "rdb$generator_name", &buf);
-    }
+    else if(show_system == false)
+        appendFQExpBuffer(&buf,
+"      AND rdb$system_flag = 0\n"
+            );
 
     appendFQExpBuffer(&buf,
 "  ORDER BY 1"
@@ -1323,7 +1325,7 @@ listSequences(char *pattern)
 
 /* \dt */
 static void
-listTables(char *pattern)
+listTables(char *pattern, bool show_system)
 {
     FQExpBufferData buf;
     printQueryOpt pqopt = fset.popt;
@@ -1336,13 +1338,16 @@ listTables(char *pattern)
 "          TRIM(LOWER(rdb$owner_name)) AS \"Owner\",  \n"
 "          COALESCE(CAST(rdb$description AS VARCHAR(80)), '') AS \"Description\"  \n"
 "     FROM rdb$relations  \n"
-"    WHERE rdb$view_blr IS NULL  \n"
+"    WHERE rdb$view_blr IS NULL \n"
         );
 
+
     if(pattern != NULL)
-    {
         _wildcard_pattern_clause(pattern, "rdb$relation_name", &buf);
-    }
+    else if(show_system == false)
+        appendFQExpBuffer(&buf,
+"      AND rdb$system_flag = 0\n"
+            );
 
     appendFQExpBuffer(&buf,
                       " ORDER BY 1"
@@ -1392,13 +1397,10 @@ listViews(char *pattern)
 "          COALESCE(CAST(rdb$description AS VARCHAR(80)), '') AS \"Description\"  \n"
 "     FROM rdb$relations  \n"
 "    WHERE rdb$view_blr IS NOT NULL  \n"
-"      AND (rdb$system_flag IS NULL OR rdb$system_flag = 0)  \n"
         );
 
     if(pattern != NULL)
-    {
         _wildcard_pattern_clause(pattern, "rdb$relation_name", &buf);
-    }
 
     appendFQExpBuffer(&buf,
                       " ORDER BY 1"
