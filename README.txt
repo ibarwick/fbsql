@@ -85,17 +85,19 @@ very basic help, or '\?' for details on available slash commands:
       \conninfo              Show information about the current connection
 
     Database
+      (options: S = show system objects, + = additional detail)
       \l                     List information about the current database
       \autocommit            Toggle autocommit (currently on)
       \d  NAME               List information about the specified object
-      \df [PATTERN]          List information about functions matching [PATTERN]
-      \di [PATTERN]          List information about indexes matching [PATTERN]
-      \dp [PATTERN]          List information about procedures matching [PATTERN]
-      \ds [PATTERN]          List information about sequences (generators) matching [PATTERN]
-      \dt [PATTERN]          List information about tables matching [PATTERN]
+      \d      NAME           List information about the specified object
+      \df     [PATTERN]      List information about functions matching [PATTERN]
+      \di[S+] [PATTERN]      List information about indexes matching [PATTERN]
+      \dp     [PATTERN]      List information about procedures matching [PATTERN]
+      \ds[S]  [PATTERN]      List information about sequences (generators) matching [PATTERN]
+      \dt[S]  [PATTERN]      List information about tables matching [PATTERN]
       \du                    List users granted privileges on this database
-      \dv [PATTERN]          List information about views matching [PATTERN]
-      \util [COMMAND]        execute utility command
+      \dv     [PATTERN]      List information about views matching [PATTERN]
+      \util   [COMMAND]      execute utility command
                                {set_index_statistics}
     SQL>
 
