@@ -87,7 +87,7 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    fset.sversion = FQserverVersion(fset.conn);
+    fset.sversion = FQserverVersionString(fset.conn);
 
     printf("Connected to Firebird v%s\n", fset.sversion);
 
