@@ -26,6 +26,7 @@ static char *complete_from_list(const char *text, int state);
 static char *complete_from_const(const char *text, int state);
 static char *complete_from_query(const char *text, int state);
 
+static char *alter_keyword_generator(const char *text, int state);
 static char *create_or_drop_keyword_generator(const char *text, int state);
 
 static void get_previous_words(int point, char **previous_words, int nwords);
@@ -105,24 +106,36 @@ typedef struct
     const char *name;
     const char *query;          /* simple query, or NULL */
     const bits32 flags;         /* visibility flags, see below */
-} create_drop_item_t;
+} create_alter_drop_item_t;
 
 #define THING_NO_CREATE     (1 << 0)    /* should not show up after CREATE */
 #define THING_NO_DROP       (1 << 1)    /* should not show up after DROP */
 #define THING_NO_SHOW       (THING_NO_CREATE | THING_NO_DROP)
 
-static const create_drop_item_t words_after_create[] = {
+static const create_alter_drop_item_t words_after_create[] = {
     {"DATABASE",  NULL},
     {"DOMAIN",    NULL},
     {"EXCEPTION", NULL},
     {"GENERATOR", NULL},
     {"INDEX",     NULL},
+    {"PROCEDURE", NULL},
     {"SEQUENCE",  NULL},
     {"TABLE",     Query_for_list_of_tables, THING_NO_CREATE},
     {"TRIGGER",   NULL},
     {"TYPE",      NULL},
     {"USER",      NULL},
     {"VIEW",      NULL},
+    {NULL}                      /* end of list */
+};
+
+static const create_alter_drop_item_t words_after_alter[] = {
+    {"DATABASE",  NULL},
+    {"DOMAIN",    NULL},
+    {"EXTERNAL FUNCTION", NULL},
+    {"GENERATOR", NULL},
+    {"PROCEDURE", NULL},
+    {"TABLE",     Query_for_list_of_tables, THING_NO_CREATE},
+    {"TRIGGER",   NULL},
     {NULL}                      /* end of list */
 };
 
@@ -242,6 +255,7 @@ fbsql_completion(char *text, int start, int end)
     };
 
     static const char *const sql_commands[] = {
+        "ALTER",
         "BEGIN",
         "COMMENT", "COMMIT", "CREATE",
         "DELETE",
@@ -331,6 +345,11 @@ fbsql_completion(char *text, int start, int end)
              pg_strcasecmp(prev3_wd, "ON") == 0 &&
              pg_strcasecmp(prev2_wd, "DATABASE") != 0)
         COMPLETE_WITH_CONST("IS");
+
+
+/* ALTER */
+    else if (pg_strcasecmp(prev_wd, "ALTER") == 0)
+        matches = COMPLETION_MATCHES(text, alter_keyword_generator);
 
 /* CREATE */
     else if (pg_strcasecmp(prev_wd, "CREATE") == 0)
@@ -466,6 +485,38 @@ fbsql_completion(char *text, int start, int end)
 
     return matches;
 }
+
+
+
+
+/**
+ * alter_keyword_generator()
+ *
+ */
+static char *
+alter_keyword_generator(const char *text, int state)
+{
+    static int  list_index,
+                string_length;
+    const char *name;
+
+    /* If this is the first time for this completion, init some values */
+    if (state == 0)
+    {
+        list_index = 0;
+        string_length = strlen(text);
+    }
+
+    /* find something that matches */
+    while ((name = words_after_alter[list_index++].name))
+    {
+        if (pg_strncasecmp(name, text, string_length) == 0)
+            return fb_strdup_keyword_case(name, text);
+    }
+    /* if nothing matches, return NULL */
+    return NULL;
+}
+
 
 /**
  * create_or_drop_keyword_generator()
