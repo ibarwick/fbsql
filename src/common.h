@@ -3,7 +3,6 @@
 #define MAXPATH 1024
 
 #include <setjmp.h>
-#include "c.h"
 #include "settings.h"
 
 extern volatile bool sigint_interrupt_enabled;

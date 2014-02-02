@@ -1,7 +1,7 @@
 #ifndef FBSQLSCAN_H
 #define FBSQLSCAN_H
 
-#include "c.h"
+
 #include "libfq.h"
 
 /* Abstract type for lexer's internal state */

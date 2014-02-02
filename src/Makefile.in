@@ -157,6 +157,7 @@ dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host_alias = @host_alias@
 htmldir = @htmldir@
+ibase = @ibase@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -171,6 +172,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+readline = @readline@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -181,6 +183,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 fbsql_SOURCES = main.c common.c input.c inputloop.c tab-complete.c command.c query.c port/strlcpy.c port/pgstrcasecmp.c fbsqlscan.l
 AM_LDFLAGS = -lfq -lfbclient -lreadline -lm
+AM_CPPFLAGS = -I$(ibase) -I$(readline)
 all: all-am
 
 .SUFFIXES:

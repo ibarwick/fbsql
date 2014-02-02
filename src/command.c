@@ -1502,19 +1502,19 @@ void
 _command_test_ins()
 {
     FQresult      *result;
-    const char *paramValues[3];
+    const char *paramValues[2];
 
     paramValues[0] = "99";
-    paramValues[1] = "xxx";
-    paramValues[2] = NULL;
+    paramValues[1] = "2041/01/01 01:14:33.1234";
+    //paramValues[2] = NULL;
 
     result = FQexecParams(
         fset.conn,
-        "INSERT INTO module (module_id, module_name) VALUES(?,?)",
+        "INSERT INTO ts_test (id, ts) VALUES(?,?)",
         //"INSERT INTO module (module_name, module_id) VALUES(?,?)",
         //"INSERT INTO module (module_id, module_position) VALUES(?,?)",
         //"INSERT INTO foo (v1, v2) VALUES(?,?)",
-        3,
+        2,
         NULL,
         paramValues,
         NULL,
@@ -1563,23 +1563,23 @@ _command_test_param(char *param)
     FQlog(fset.conn, DEBUG1, "key %s", FQformatDbKey(query_result, 0, 0));
     db_key = FQformatDbKey(query_result, 0, 0);
 
-    paramValues[0] = param;
+    paramValues[0] = "en";
 
     paramValues[1] = db_key;
 
     result = FQexecParams(
         fset.conn,
-        //"SELECT * FROM language WHERE lang_id!=? ",
+        "SELECT * FROM language WHERE lang_id=? ",
         //cast_varchar,
         //"SELECT * FROM language WHERE name_english != ?",
         //"UPDATE language SET name_native=? WHERE lang_id='en'",
-        "UPDATE language SET name_native=? WHERE RDB$DB_KEY = ?",
+        //"UPDATE language SET name_native=? WHERE RDB$DB_KEY = ?",
         //"SELECT * FROM language WHERE rdb$db_key = ?",
-        2,
+        1,
         NULL,
         paramValues,
         NULL,
-        paramFormats,
+        NULL,//paramFormats,
         0
         );
 

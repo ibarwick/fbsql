@@ -13,12 +13,13 @@
 #include <stdio.h>
 #include <readline.h>
 
+#include "libfq.h"
 #include "fbsql.h"
 #include "common.h"
 #include "libfq.h"
 #include "settings.h"
 #include "port.h"
-#include "c.h"
+
 
 static char **fbsql_completion(char *text, int start, int end);
 

@@ -2,7 +2,6 @@
 #define PORT_H
 
 #include <stdlib.h>
-#include "c.h"
 
 extern size_t strlcpy(char *dst, const char *src, size_t siz);
 

@@ -57,7 +57,7 @@ Usage
 
 e.g.:
 
-  fbsql -d localhost:/srv/firebird/employee.fdb -u sysdba -p masterkey
+    fbsql -d localhost:/srv/firebird/employee.fdb -u sysdba -p masterke
 
 The environment variables ISC_DATABASE, ISC_USER and ISC_PASSWORD are also
 recognized.
@@ -65,7 +65,7 @@ recognized.
 After connecting to Firebird, queries can be executed. Enter 'help' for some
 very basic help, or '\?' for details on available slash commands:
 
-    fbsql 0.03
+    fbsql 0.1.3
     Connected to Firebird v2.5.2
     SQL> \?
     General
