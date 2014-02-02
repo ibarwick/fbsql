@@ -1,0 +1,9 @@
+Revision history for fbsql
+
+0.1.3	2014-02-02
+	- add RPM SPEC file
+	- consolidate header files
+	- change version numbering system
+
+0.03    2014-12-25
+	- initial public release
