@@ -1125,6 +1125,7 @@ listDatabaseInfo(void)
 "        mon$sql_dialect   AS \"SQL Dialect\", \n"
 "        mon$creation_date AS \"Creation Date\", \n"
 "        mon$pages * mon$page_size AS \"Size (bytes)\", \n"
+"        TRIM(rdb$character_set_name) AS \"Encoding\", \n"
 "        COALESCE(CAST(rdb$description AS VARCHAR(80)), '') AS \"Description\" \n"
 "   FROM mon$database, rdb$database\n";
 
