@@ -92,6 +92,9 @@ main(int argc, char *argv[])
     kw[3] = "client_encoding";
     val[3] = fset.client_encoding;
 
+    kw[4] = NULL;
+    val[4] = NULL;
+
     fset.conn = FQconnectdbParams(kw, val);
 
     if(FQstatus(fset.conn) == CONNECTION_BAD)
