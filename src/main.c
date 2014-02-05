@@ -248,7 +248,7 @@ usage(void)
 
     printf("  -p, --password           password\n");
 
-    printf("  -C, --client-encoding    client encoding\n");
+    printf("  -C, --client-encoding    client encoding (default: UTF-8)\n");
 
     printf("\n");
 
