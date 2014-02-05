@@ -46,6 +46,8 @@ int
 main(int argc, char *argv[])
 {
     int result;
+    const char *kw[5];
+    const char *val[5];
 
     init_settings();
 
@@ -78,7 +80,19 @@ main(int argc, char *argv[])
         }
     }
 
-    fset.conn = FQconnect(fset.dbpath, fset.username, fset.password);
+    kw[0] = "db_path";
+    val[0] = fset.dbpath;
+
+    kw[1] = "user";
+    val[1] = fset.username;
+
+    kw[2] = "password";
+    val[2] = fset.password;
+
+    kw[3] = "client_encoding";
+    val[3] = fset.client_encoding;
+
+    fset.conn = FQconnectdbParams(kw, val);
 
     if(FQstatus(fset.conn) == CONNECTION_BAD)
     {
@@ -98,9 +112,7 @@ main(int argc, char *argv[])
     save_history(fset.fbsql_history);
 
     if(fset.conn->trans != 0L)
-    {
         puts("Rolling back uncommitted transaction");
-    }
 
     FQfinish(fset.conn);
 
@@ -122,6 +134,7 @@ parse_fbsql_options(int argc, char *argv[])
         {"echo-internal", no_argument, NULL, 'E'},
         {"username", required_argument, NULL, 'u'},
         {"password", required_argument, NULL, 'p'},
+        {"client-encoding", required_argument, NULL, 'C'},
         {"help", no_argument, NULL, '?'},
         {"version", no_argument, NULL, 'V'},
         {NULL, 0, NULL, 0}
@@ -132,7 +145,7 @@ parse_fbsql_options(int argc, char *argv[])
     extern int  optind;
     int         c;
 
-    while ((c = getopt_long(argc, argv, "d:Eu:p:?V",
+    while ((c = getopt_long(argc, argv, "d:Eu:p:C:?V",
                             long_options, &optindex)) != -1)
     {
 
@@ -152,6 +165,10 @@ parse_fbsql_options(int argc, char *argv[])
 
             case 'p':
                 fset.password = strdup(optarg);
+                break;
+
+            case 'C':
+                fset.client_encoding = strdup(optarg);
                 break;
 
             case '?':
@@ -230,6 +247,8 @@ usage(void)
     printf("\n");
 
     printf("  -p, --password           password\n");
+
+    printf("  -C, --client-encoding    client encoding\n");
 
     printf("\n");
 

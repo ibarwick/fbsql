@@ -145,6 +145,10 @@ init_settings(void) {
 	fset.quiet = false;
 	fset.lc_fold = true;
 	fset.autocommit = true;
+
+/* provisional sane default value */
+    fset.client_encoding = "UTF-8";
+
 /*
  * this is currently not used, but in some places a dummy value
  * needs to be fetched from fset.
