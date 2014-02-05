@@ -14,7 +14,11 @@ including:
  - autocommit mode (default: on)
  - indicates transaction status in the prompt
 
-It is however far from complete. USE AT YOUR OWN RISK.
+Note that by default, fbsql assumes a UTF-8 environment. An alternative
+encoding can be provided with the -C/--client-encoding command line option,
+however it is not possible to switch encoding during a session.
+
+fbsql is far from complete. USE AT YOUR OWN RISK.
 
 
 Installation
@@ -110,8 +114,7 @@ Many, in particular:
  - command terminator is limited to a semicolon; it is currently not possible
    to create functions/procedures with fbsql.
  - no BLOB/ARRAY support
- - no support for encodings other than UTF-8, and no particular support for
-   non-ASCII characters
+ - does not properly align column data containing non-ASCII characters
  - no configuration file support
 
 
