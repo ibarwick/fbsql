@@ -606,6 +606,12 @@ _border2string(enum borderFormat in)
     return "unknown";
 }
 
+
+/**
+ * showActivity()
+ *
+ * \activity
+ */
 static void
 showActivity(void)
 {
@@ -615,15 +621,18 @@ showActivity(void)
     pqopt.header = "Current activity";
 
     query =
-"    SELECT TRIM(ma.mon$user) AS \"User\",\n"
-"           ma.mon$timestamp AS \"Connection start\",\n"
-"           ma.mon$remote_address AS \"Client address\",\n"
-"           COALESCE(ma.mon$remote_process, '-') AS \"Client application\",\n"
-"           TRIM(ma.mon$role) AS \"Role\",\n"
-"           ma.mon$state AS \"State\",\n"
-"           ma.mon$server_pid AS \"Server PID\",\n"
-"           ma.mon$remote_pid AS \"Client PID\"\n"
-"      FROM mon$attachments ma";
+"    SELECT TRIM(mon$user) AS \"User\",\n"
+"           mon$timestamp AS \"Connection start\",\n"
+"           mon$remote_address AS \"Client address\",\n"
+"           COALESCE(mon$remote_process, '-') AS \"Client application\",\n"
+"           TRIM(mon$role) AS \"Role\",\n"
+"           mon$state AS \"State\",\n"
+"           mon$server_pid AS \"Server PID\",\n"
+"           mon$remote_pid AS \"Client PID\",\n"
+"           TRIM(rdb$character_set_name) AS \"Client encoding\"\n"
+"      FROM mon$attachments\n"
+"INNER JOIN rdb$character_sets\n"
+"        ON mon$character_set_id = rdb$character_set_id";
 
     commandExecPrint(query, &pqopt);
 }
