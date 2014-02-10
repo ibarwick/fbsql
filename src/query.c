@@ -293,6 +293,7 @@ _getColumnMaxWidth(const FQresult *query_result, int column)
 {
     int max_width;
 
+    /* Columns containing the RDB$DB_KEY value will always be fixed-width */
     if(FQftype(query_result, column) == SQL_DB_KEY)
     {
         return FB_DB_KEY_LEN;

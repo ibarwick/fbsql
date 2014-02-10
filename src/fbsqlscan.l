@@ -85,7 +85,7 @@ typedef struct FbsqlScanStateData
 	const char *scanline;		/* current input line at outer level */
 
 	/* safe_encoding, curline, refline are used by emit() to replace FFs */
-	int			encoding;		/* encoding being used now */
+	short 	    client_encoding_id;		/* encoding being used now */
 	bool		safe_encoding;	/* is current encoding "safe"? */
 	const char *curline;		/* actual flex input string for cur buf */
 	const char *refline;		/* original data for cur buffer */
@@ -1220,8 +1220,8 @@ fbsql_scan_setup(FbsqlScanState state,
 	Assert(state->buffer_stack == NULL);*/
 
 	/* Do we need to hack the character set encoding? */
-	/*state->encoding = pset.encoding;
-	state->safe_encoding = pg_valid_server_encoding_id(state->encoding);*/
+	state->client_encoding_id = fset.client_encoding_id;
+/*	state->safe_encoding = pg_valid_server_encoding_id(state->encoding);*/
     state->safe_encoding = true;
 
 	/* needed for prepare_buffer */
@@ -1599,8 +1599,8 @@ fbsql_scan_slash_option(FbsqlScanState state,
 					{
 						if (!inquotes && type == OT_SQLID)
 							*cp = pg_tolower((unsigned char) *cp);
- 
-						cp += FQmblen(cp, fset.encoding);
+
+						cp += FQmblen(cp, fset.client_encoding_id);
 					}
 				}
 			}
@@ -1836,7 +1836,7 @@ prepare_buffer(const char *txt, int len, char **txtcopy)
 
 		while (i < len)
 		{
-			int		thislen = FQmblen(txt + i, cur_state->encoding);
+			int		thislen = FQmblen(txt + i, cur_state->client_encoding_id);
 
 			/* first byte should always be okay... */
 			newtxt[i] = txt[i];

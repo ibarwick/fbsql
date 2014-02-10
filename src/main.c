@@ -105,6 +105,8 @@ main(int argc, char *argv[])
     }
 
     fset.sversion = FQserverVersionString(fset.conn);
+    fset.client_encoding_id = FQclientEncodingId(fset.conn);
+    fset.conn->get_dsp_len = true;
 
     printf("Connected to Firebird v%s\n", fset.sversion);
 

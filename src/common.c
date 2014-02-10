@@ -148,13 +148,6 @@ init_settings(void) {
 
 /* provisional sane default value */
     fset.client_encoding = "UTF-8";
-
-/*
- * this is currently not used, but in some places a dummy value
- * needs to be fetched from fset.
- * TODO: fix this when making fbsql multibyte-capable.
- */
-	fset.encoding = 0;
 	fset.popt.nullPrint = strdup("NULL");
 	fset.popt.header = NULL;
 

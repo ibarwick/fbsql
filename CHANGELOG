@@ -1,12 +1,13 @@
 Revision history for fbsql
 
 0.1.4   2014-02-??
-	- \l command: display database encoding
+        - "\l" command: display database encoding
+        - "\activity" command: display client encoding
 
-0.1.3	2014-02-02
-	- add RPM SPEC file
-	- consolidate header files
-	- change version numbering system
+0.1.3   2014-02-02
+        - add RPM SPEC file
+        - consolidate header files
+        - change version numbering system
 
 0.02    2014-12-25
-	- initial public release
+        - initial public release

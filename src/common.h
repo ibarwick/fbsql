@@ -21,8 +21,7 @@ extern void fbsql_error(const char *fmt,...);
 
 extern void init_settings(void);
 
-extern const printTextFormat *
-_getBorderFormat(void);
+extern const printTextFormat *_getBorderFormat(void);
 
 
 #endif   /* COMMON_H */

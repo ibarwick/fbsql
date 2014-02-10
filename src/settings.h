@@ -71,16 +71,16 @@ typedef struct _fbsqlSettings
     char             *username;
     char             *password;
     char             *client_encoding;
-    int               encoding;
+    int               client_encoding_id; /* corresponds to MON$ATTACHMENTS.MON$CHARACTER_SET_ID */
     char             *home_path;
     char             *fbsql_history;
     printQueryOpt     popt;
-    bool              timing;          /* toggle timing display */
+    bool              timing;             /* toggle timing display */
     bool              quiet;
-    bool              lc_fold;         /* fold column headings to lower-case? */
+    bool              lc_fold;            /* fold column headings to lower-case? */
     bool              echo_hidden;
     bool              autocommit;
-    short             plan_display;    /* display query plan? */
+    short             plan_display;       /* display query plan? */
     HistControl       histcontrol;
 } fbsqlSettings;
 
