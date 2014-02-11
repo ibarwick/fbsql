@@ -175,12 +175,24 @@ printQuery(const FQresult *query_result, const printQueryOpt *pqopt)
 static char *
 _formatColumn(const FQresult *query_result, int row, int column, char *value, bool for_header)
 {
-    int value_len, column_max_len;
+    int value_len, column_byte_width, column_max_width;
     char *result;
     char *formatted_value;
     char format[32];
 
-    column_max_len = _getColumnMaxWidth(query_result, column);
+    formatted_value = _formatValue(query_result, row, column, value, for_header);
+
+    if(value == NULL)
+        value_len = 0;
+    else
+        value_len = strlen(formatted_value);
+
+    column_max_width = _getColumnMaxWidth(query_result, column);
+
+    if(for_header == true)
+        column_byte_width = value_len + (column_max_width - FQdspstrlen(formatted_value, FQclientEncodingId(fset.conn)));
+    else
+        column_byte_width = value_len + (column_max_width - FQgetdsplen(query_result, row, column));
 
     if(fset.popt.topt.format == PRINT_ALIGNED)
     {
@@ -194,14 +206,14 @@ _formatColumn(const FQresult *query_result, int row, int column, char *value, bo
                 /* right-justify numbers */
                 sprintf(format,"%s%%%is%s",
                         fset.popt.topt.border_format->padding ? " " : "",
-                        column_max_len,
+                        column_max_width,
                         fset.popt.topt.border_format->padding ? " " : "");
                 break;
 
             default:
                 sprintf(format,"%s%%-%is%s",
                         fset.popt.topt.border_format->padding ? " " : "",
-                        column_max_len,
+                        column_byte_width,
                         fset.popt.topt.border_format->padding ? " " : "");
         }
     }
@@ -210,17 +222,9 @@ _formatColumn(const FQresult *query_result, int row, int column, char *value, bo
         sprintf(format,"%%s");
     }
 
-    formatted_value = _formatValue(query_result, row, column, value, for_header);
+    result = (char *)malloc(column_byte_width + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
 
-    if(value == NULL)
-        value_len = 0;
-    else
-        value_len = strlen(formatted_value);
-
-    result = (char *)malloc(column_max_len + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
-
-    sprintf(result, format, formatted_value, column_max_len - value_len);
-
+    sprintf(result, format, formatted_value);
     if(formatted_value != NULL)
         free(formatted_value);
 
@@ -245,7 +249,8 @@ _formatValue(const FQresult *query_result, int row, int column, const char *valu
         sprintf(formatted_value, "%s", src);
         free(src);
     }
-    else {
+    else
+    {
         formatted_value = (char *)malloc(strlen(value) + 1);
         sprintf(formatted_value, "%s", value);
     }
