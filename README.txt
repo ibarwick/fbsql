@@ -70,7 +70,7 @@ recognized.
 After connecting to Firebird, queries can be executed. Enter 'help' for some
 very basic help, or '\?' for details on available slash commands:
 
-    fbsql 0.1.3
+    fbsql 0.1.4
     Connected to Firebird v2.5.2
     SQL> \?
     General

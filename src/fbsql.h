@@ -3,7 +3,7 @@
 
 #include <setjmp.h>
 
-#define FBSQL_VERSION "0.1.3"
+#define FBSQL_VERSION "0.1.4"
 
 
 
