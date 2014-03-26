@@ -189,7 +189,8 @@ _formatColumn(const FQresult *query_result, int row, int column, char *value, bo
 
     column_max_width = _getColumnMaxWidth(query_result, column);
 
-    if(for_header == true)
+    if(for_header == true
+    || FQgetisnull(query_result, row, column))
         column_byte_width = value_len + (column_max_width - FQdspstrlen(formatted_value, FQclientEncodingId(fset.conn)));
     else
         column_byte_width = value_len + (column_max_width - FQgetdsplen(query_result, row, column));
