@@ -35,7 +35,7 @@ static void commandExecPrint(const char *query, const printQueryOpt *pqopt);
 static void showUsage(void);
 
 static void describeObject(char *name);
-static void _describeTable(char *name, char *object_type, char *query);
+static void _describeObject(char *name, char *object_type, char *query);
 
 static void describeTable(char *name);
 static void describeView(char *name);
@@ -765,12 +765,12 @@ describeObject(char *name)
 }
 
 
+/* Output object information from query */
 void
-_describeTable(char *name, char *object_type, char *query)
+_describeObject(char *name, char *object_type, char *query)
 {
     printQueryOpt pqopt = fset.popt;
 
-    /* Display table columns */
     char *format = "%s \"%s\"";
     pqopt.header = malloc(strlen(name) + strlen(object_type) + 4);
 
@@ -814,7 +814,7 @@ describeTable(char *name)
                     name
         );
 
-    _describeTable(name, "Table", buf.data);
+    _describeObject(name, "Table", buf.data);
 
     termFQExpBuffer(&buf);
 
@@ -1043,7 +1043,7 @@ describeIndex(char *name)
                       name
         );
 
-    _describeTable(name, "Index", buf.data);
+    _describeObject(name, "Index", buf.data);
 
     termFQExpBuffer(&buf);
 
@@ -1115,7 +1115,7 @@ describeView(char *name)
 "  ORDER BY rdb$field_position\n",
                     name
         );
-    _describeTable(name, "View", buf.data);
+    _describeObject(name, "View", buf.data);
 
     termFQExpBuffer(&buf);
 }
