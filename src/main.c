@@ -66,7 +66,7 @@ main(int argc, char *argv[])
     {
         fset.dbpath = getenv("ISC_DATABASE");
         if(fset.dbpath == NULL) {
-            printf("need -d dbpath\n");
+            puts("need -d dbpath\n");
             return 1;
         }
     }
@@ -75,7 +75,7 @@ main(int argc, char *argv[])
     {
         fset.username = getenv("ISC_USER");
         if(fset.username == NULL) {
-            printf("need -u username\n");
+            puts("need -u username\n");
             return 1;
         }
     }

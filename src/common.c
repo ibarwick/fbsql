@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -22,7 +21,7 @@
 #include "settings.h"
 
 volatile bool sigint_interrupt_enabled = false;
-sigjmp_buf	sigint_interrupt_jmp;
+sigjmp_buf sigint_interrupt_jmp;
 volatile bool cancel_pressed = false;
 
 

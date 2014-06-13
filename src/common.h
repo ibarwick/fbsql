@@ -11,7 +11,7 @@ extern sigjmp_buf sigint_interrupt_jmp;
 
 extern volatile bool cancel_pressed;
 
-extern void setup_cancel_handler(void);
+/*extern void setup_cancel_handler(void);*/
 extern void handle_signals(int signo);
 extern char *get_home_path(void);
 

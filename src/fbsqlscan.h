@@ -7,7 +7,7 @@
 /* Abstract type for lexer's internal state */
 typedef struct FbsqlScanStateData *FbsqlScanState;
 
-/* Termination states for psql_scan() */
+/* Termination states for fbsql_scan() */
 typedef enum
 {
 	FSCAN_SEMICOLON,			/* found command-ending semicolon */
