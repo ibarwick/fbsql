@@ -136,6 +136,7 @@ printQuery(const FQresult *query_result, const printQueryOpt *pqopt)
 {
     int i, nfields, ntuples;
 
+    /* Print header */
     _printTableHeader(query_result, pqopt);
 
     /* Print data rows */
@@ -237,6 +238,8 @@ _formatColumn(const FQresult *query_result, int row, int column, char *value, bo
  * _formatValue()
  *
  * Format column value for display
+ *
+ * This ensures SQL_DB_KEY values are rendered correctly
  */
 static char *
 _formatValue(const FQresult *query_result, int row, int column, const char *value, bool for_header)
@@ -321,14 +324,15 @@ _getColumnMaxWidth(const FQresult *query_result, int column)
 }
 
 
+/**
+ * _printTableHeader()
+ *
+ */
 static void
 _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
 {
     int i;
 
-    char *p;
-    char *column_name;
-    char *column_name_lc;
 
     /* No tuples returned - no header info available :(
        Not sure if there is a work around to get the header info
@@ -336,6 +340,7 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
     if(FQntuples(query_result) == 0)
         return;
 
+    /* Print overall table header, if set */
     if(pqopt->header != NULL)
     {
         if(pqopt->topt.format == PRINT_ALIGNED)
@@ -356,7 +361,8 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
                 );
             printf(format, pqopt->header);
         }
-        else {
+        else
+        {
             printf("%s\n", pqopt->header);
         }
     }
@@ -365,11 +371,12 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
 
     for(i = 0; i < FQnfields(query_result); i++)
     {
+        char *p = NULL;
+        char *column_name = FQfname(query_result, i);
+        char *column_name_lc = NULL;
+
         if(i)
             printf("%s", pqopt->topt.border_format->divider);
-
-        column_name = FQfname(query_result, i);
-        column_name_lc = NULL;
 
         /* Fold columns to lower case. This will not fold mixed-case columns
            which were explicitly quoted, but any upper-case columns quoted
@@ -404,9 +411,9 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
 
     puts("");
 
+    /* print column header underline (PRINT_ALIGNED mode only) */
     if(pqopt->topt.format == PRINT_ALIGNED)
     {
-        /* print column header underline */
         for(i = 0; i < FQnfields(query_result); i++)
         {
             if(i)

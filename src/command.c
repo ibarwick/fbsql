@@ -26,8 +26,6 @@
 #include "query.h"
 #include "common.h"
 
-/*
- */
 
 static FQresult* commandExec(const char *query);
 static void commandExecPrint(const char *query, const printQueryOpt *pqopt);
@@ -168,6 +166,7 @@ execSlashCommand(const char *cmd,
     show_extended = strchr(cmd, '+') ? true : false;
     show_system = strchr(cmd, 'S') ? true : false;
 
+    /* \q - quit session */
     if(strncmp(cmd, "q", 1) == 0)
     {
         status = FBSQL_CMD_TERMINATE;
@@ -350,7 +349,7 @@ execSlashCommand(const char *cmd,
     }
 
 
-    /* \format -- set printing parameters */
+    /* \format - set printing parameters */
     else if (strcmp(cmd, "format") == 0)
     {
         char *opt0 = fbsql_scan_slash_option(scan_state,
@@ -423,6 +422,10 @@ execSlashCommand(const char *cmd,
 }
 
 
+/**
+ * do_format()
+ *
+ */
 bool
 do_format(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 {
@@ -638,13 +641,21 @@ showActivity(void)
 }
 
 
+/**
+ * showCopyright()
+ *
+ */
 static void
 showCopyright(void)
 {
-    printf("fbsql v%s (c) Copyright 2013 Ian Barwick\n", FBSQL_VERSION);
+    printf("fbsql v%s (c) Copyright 2013-2014 Ian Barwick\n", FBSQL_VERSION);
 }
 
 
+/**
+ * showUsage()
+ *
+ */
 static void
 showUsage(void)
 {
@@ -725,12 +736,9 @@ describeObject(char *name)
     char *type;
     FQresult   *query_result;
 
-    /* get objects type */
+    /* get object's type */
 
     sprintf(type_query, type_query_tmpl, name, name, name);
-
-    if(fset.echo_hidden == true)
-        printf("%s\n", type_query);
 
     query_result = commandExec(type_query);
 
@@ -1467,6 +1475,11 @@ _listIndexSegments(char *index_name)
 }
 
 
+/**
+ * _sqlFieldType()
+ *
+ *
+ */
 static char *
 _sqlFieldType(void)
 {

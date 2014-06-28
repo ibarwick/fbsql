@@ -61,6 +61,11 @@ gets_interactive(char *prompt)
 }
 
 
+/**
+ * fb_append_history()
+ *
+ * Append a line to internal history buffer
+ */
 void
 fb_append_history(const char *line, FQExpBuffer history_buf)
 {
@@ -70,6 +75,11 @@ fb_append_history(const char *line, FQExpBuffer history_buf)
 }
 
 
+/**
+ * send_history()
+ *
+ * Add history buffer contents to readline
+ */
 void
 send_history(FQExpBuffer history_buf)
 {
@@ -106,6 +116,11 @@ send_history(FQExpBuffer history_buf)
 }
 
 
+/**
+ * fetch_history()
+ *
+ * Read history from file
+ */
 bool
 fetch_history(char *fname)
 {
@@ -123,6 +138,11 @@ fetch_history(char *fname)
 }
 
 
+/**
+ * save_history()
+ *
+ * Write history to file
+ */
 bool
 save_history(char *fname)
 {

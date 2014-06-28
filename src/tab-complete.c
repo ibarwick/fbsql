@@ -16,7 +16,6 @@
 #include "libfq.h"
 #include "fbsql.h"
 #include "common.h"
-#include "libfq.h"
 #include "settings.h"
 #include "port.h"
 
@@ -98,15 +97,14 @@ static char *fb_strdup_keyword_case(const char *s, const char *ref);
 " ORDER BY 1"
 
 /*
- * This is a list of all "things" in Firebird which can show up after CREATE or
- * DROP; and there is also a query to get a list of them.
+ * List of keywords and optionally queries to generate a list of appropriate
+ * objects which can appear after CREATE, DROP and ALTER.
  */
-
 typedef struct
 {
-    const char *name;
-    const char *query;          /* simple query, or NULL */
-    const bits32 flags;         /* visibility flags, see below */
+    const char   *name;
+    const char   *query;         /* simple query, or NULL */
+    const bits32  flags;         /* visibility flags, see below */
 } create_alter_drop_item_t;
 
 #define THING_NO_CREATE     (1 << 0)    /* should not show up after CREATE */
@@ -319,6 +317,12 @@ fbsql_completion(char *text, int start, int end)
             };
         COMPLETE_WITH_LIST_CS(list_border);
     }
+
+
+/* ALTER */
+    else if (pg_strcasecmp(prev_wd, "ALTER") == 0)
+        matches = COMPLETION_MATCHES(text, alter_keyword_generator);
+
 /* COMMENT */
     else if (pg_strcasecmp(prev_wd, "COMMENT") == 0)
     {
@@ -346,11 +350,6 @@ fbsql_completion(char *text, int start, int end)
              pg_strcasecmp(prev3_wd, "ON") == 0 &&
              pg_strcasecmp(prev2_wd, "DATABASE") != 0)
         COMPLETE_WITH_CONST("IS");
-
-
-/* ALTER */
-    else if (pg_strcasecmp(prev_wd, "ALTER") == 0)
-        matches = COMPLETION_MATCHES(text, alter_keyword_generator);
 
 /* CREATE */
     else if (pg_strcasecmp(prev_wd, "CREATE") == 0)
@@ -486,8 +485,6 @@ fbsql_completion(char *text, int start, int end)
 
     return matches;
 }
-
-
 
 
 /**

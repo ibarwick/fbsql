@@ -172,6 +172,11 @@ init_settings(void) {
 }
 
 
+/**
+ * _getBorderFormat()
+ *
+ * Return pointer to structure with border format parameters
+ */
 const printTextFormat *
 _getBorderFormat()
 {
