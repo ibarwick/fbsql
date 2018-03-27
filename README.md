@@ -1,39 +1,39 @@
 fbsql - a command-line client for Firebird
 ==========================================
 
-fbsql is a simple command-line client for the Firebird database, inspired
-by PostgreSQL's psql. It is very much a proof-of-concept serving primarily
-as a testbed for libfq (itself an experimential partial port of PostgreSQL's
-libpq).
+`fbsql` is a simple command-line client for the Firebird database, inspired
+by PostgreSQL's `psql`. It is very much a proof-of-concept serving primarily
+as a testbed for `libfq` (itself an experimental partial port of PostgreSQL's
+`libpq` ).
 
-fbsql provides some advantages over Firebird's native client 'isql',
+fbsql provides some advantages over Firebird's native client `isql`,
 including:
 
- - libreadline-based tab completion for both SQL and database objects
+ - `libreadline`-based tab completion for both SQL and database objects
  - some useful meta commands ("slash commands")
- - autocommit mode (default: on)
+ - autocommit mode (default: `on`)
  - indicates transaction status in the prompt
 
 Note that by default, fbsql assumes a UTF-8 environment. An alternative
-encoding can be provided with the -C/--client-encoding command line option,
+encoding can be provided with the `-C/--client-encoding` command line option,
 however it is not possible to switch encoding during a session.
 
-fbsql is far from complete. USE AT YOUR OWN RISK.
+`fbsql` is far from complete. *USE AT YOUR OWN RISK.*
 
 
 Installation
 ------------
 
-fbsql requires libfq ( https://github.com/ibarwick/libfq ) and both
+`fbsql` requires `libfq` ( https://github.com/ibarwick/libfq ) and both
 require the Firebird client library and header files. It also requires
-libreadline.
+`libreadline`.
 
 The usual:
 
     ./configure
     make install
 
-You may need to specify the location of 'ibase.h' in CFLAGS.
+You may need to specify the location of `ibase.h` in `CFLAGS`.
 
 
 Usage
@@ -64,14 +64,14 @@ e.g.:
 
     fbsql -d localhost:/srv/firebird/employee.fdb -u sysdba -p masterke
 
-The environment variables ISC_DATABASE, ISC_USER and ISC_PASSWORD are also
+The environment variables `ISC_DATABASE`, `ISC_USER` and `ISC_PASSWORD` are also
 recognized.
 
-After connecting to Firebird, queries can be executed. Enter 'help' for some
-very basic help, or '\?' for details on available slash commands:
+After connecting to Firebird, queries can be executed. Enter `help` for some
+very basic help, or `\?` for details on available slash commands:
 
     fbsql 0.1.4
-    Connected to Firebird v2.5.2
+    Connected to Firebird v2.5.7 (libfq version 0.1.5dev)
     SQL> \?
     General
       \copyright             Show fbsql copyright information
@@ -93,7 +93,6 @@ very basic help, or '\?' for details on available slash commands:
       (options: S = show system objects, + = additional detail)
       \l                     List information about the current database
       \autocommit            Toggle autocommit (currently on)
-      \d  NAME               List information about the specified object
       \d      NAME           List information about the specified object
       \df     [PATTERN]      List information about functions matching [PATTERN]
       \di[S+] [PATTERN]      List information about indexes matching [PATTERN]
@@ -103,7 +102,7 @@ very basic help, or '\?' for details on available slash commands:
       \du                    List users granted privileges on this database
       \dv     [PATTERN]      List information about views matching [PATTERN]
       \util   [COMMAND]      execute utility command
-                               {set_index_statistics}
+                                {set_index_statistics}
     SQL>
 
 
@@ -113,8 +112,8 @@ Limitations
 Many, in particular:
 
  - command terminator is limited to a semicolon; it is currently not possible
-   to create functions/procedures with fbsql.
- - no BLOB/ARRAY support
+   to create functions/procedures with `fbsql`
+ - no `BLOB`/`ARRAY` support (due to missing support in `libfq`)
  - does not properly align column data containing non-ASCII characters
  - no configuration file support
 
