@@ -655,42 +655,42 @@ static void
 showUsage(void)
 {
 	printf("General\n");
-	printf("  \\copyright			  Show fbsql copyright information\n");
-	printf("  \\g or ;				  execute query\n");
-	printf("  \\q					  quit fbsql\n");
+	printf("  \\copyright             Show fbsql copyright information\n");
+	printf("  \\g or ;                execute query\n");
+	printf("  \\q                     quit fbsql\n");
 	printf("\n");
 
 	printf("Display\n");
-	printf("  \\a					  Toggle aligned mode (currently %s)\n",
+	printf("  \\a                     Toggle aligned mode (currently %s)\n",
 		   fset.popt.topt.format == PRINT_ALIGNED ? "on" : "off");
 	printf("  \\format OPTION [VALUE] Set or show table output formatting option:\n");
-	printf("						   {alignment|border|null}\n");
-	printf("  \\plan [SETTING]		  Display plan {off|on|only} (currently %s)\n",
-		   render_plan_display(fset.plan_display));
-	printf("  \\timing				  Toggle excution timing (currently %s)\n",
-		   fset.timing ? "on" : "off");
+	printf("                           {alignment|border|null}\n");
+	printf("  \\plan [SETTING]        Display plan {off|on|only} (currently %s)\n",
+           render_plan_display(fset.plan_display));
+	printf("  \\timing                Toggle excution timing (currently %s)\n",
+           fset.timing ? "on" : "off");
 	printf("\n");
 
 	printf("Environment\n");
-	printf("  \\activity			  Show information about current database activity\n");
-	printf("  \\conninfo			  Show information about the current connection\n");
+	printf("  \\activity              Show information about current database activity\n");
+	printf("  \\conninfo              Show information about the current connection\n");
 	printf("\n");
 
 	printf("Database\n");
 	printf("  (options: S = show system objects, + = additional detail)\n");
-	printf("  \\l					  List information about the current database\n");
-	printf("  \\autocommit			  Toggle autocommit (currently %s)\n",
-		   fset.autocommit ? "on" : "off");
-	printf("  \\d	   NAME			  List information about the specified object\n");
-	printf("  \\df	   [PATTERN]	  List information about functions matching [PATTERN]\n");
-	printf("  \\di[S+] [PATTERN]	  List information about indexes matching [PATTERN]\n");
-	printf("  \\dp	   [PATTERN]	  List information about procedures matching [PATTERN]\n");
-	printf("  \\ds[S]  [PATTERN]	  List information about sequences (generators) matching [PATTERN]\n");
-	printf("  \\dt[S]  [PATTERN]	  List information about tables matching [PATTERN]\n");
-	printf("  \\du					  List users granted privileges on this database\n");
-	printf("  \\dv	   [PATTERN]	  List information about views matching [PATTERN]\n");
-	printf("  \\util   [COMMAND]	  execute utility command\n");
-	printf("						   {set_index_statistics}\n");
+	printf("  \\l                     List information about the current database\n");
+	printf("  \\autocommit            Toggle autocommit (currently %s)\n",
+           fset.autocommit ? "on" : "off");
+	printf("  \\d      NAME           List information about the specified object\n");
+	printf("  \\df     [PATTERN]      List information about functions matching [PATTERN]\n");
+	printf("  \\di[S+] [PATTERN]      List information about indexes matching [PATTERN]\n");
+	printf("  \\dp     [PATTERN]      List information about procedures matching [PATTERN]\n");
+	printf("  \\ds[S]  [PATTERN]      List information about sequences (generators) matching [PATTERN]\n");
+	printf("  \\dt[S]  [PATTERN]      List information about tables matching [PATTERN]\n");
+	printf("  \\du                    List users granted privileges on this database\n");
+	printf("  \\dv     [PATTERN]      List information about views matching [PATTERN]\n");
+	printf("  \\util   [COMMAND]      execute utility command\n");
+	printf("                            {set_index_statistics}\n");
 }
 
 
