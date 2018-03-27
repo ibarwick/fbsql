@@ -22,11 +22,11 @@
 void
 init_readline(void)
 {
-    rl_readline_name = "fbsql";
-    using_history();
-    fetch_history(fset.fbsql_history);
+	rl_readline_name = "fbsql";
+	using_history();
+	fetch_history(fset.fbsql_history);
 
-    initialize_tabcomplete();
+	initialize_tabcomplete();
 }
 
 
@@ -41,23 +41,23 @@ init_readline(void)
 char *
 gets_interactive(char *prompt)
 {
-    bool useReadline = true;
-    if (useReadline)
-    {
-        char       *result;
+	bool useReadline = true;
+	if (useReadline)
+	{
+		char	   *result;
 
-        /* Enable SIGINT to longjmp to sigint_interrupt_jmp */
-        sigint_interrupt_enabled = true;
+		/* Enable SIGINT to longjmp to sigint_interrupt_jmp */
+		sigint_interrupt_enabled = true;
 
-        result = readline((char *)prompt);
+		result = readline((char *)prompt);
 
-        /* Disable SIGINT again */
-        sigint_interrupt_enabled = false;
+		/* Disable SIGINT again */
+		sigint_interrupt_enabled = false;
 
-        return result;
-    }
+		return result;
+	}
 
-    return (char *)NULL;
+	return (char *)NULL;
 }
 
 
@@ -69,9 +69,9 @@ gets_interactive(char *prompt)
 void
 fb_append_history(const char *line, FQExpBuffer history_buf)
 {
-    appendFQExpBufferStr(history_buf, line);
-    if (!line[0] || line[strlen(line) - 1] != '\n')
-        appendFQExpBufferChar(history_buf, '\n');
+	appendFQExpBufferStr(history_buf, line);
+	if (!line[0] || line[strlen(line) - 1] != '\n')
+		appendFQExpBufferChar(history_buf, '\n');
 }
 
 
@@ -83,36 +83,36 @@ fb_append_history(const char *line, FQExpBuffer history_buf)
 void
 send_history(FQExpBuffer history_buf)
 {
-    static char *prev_hist = NULL;
+	static char *prev_hist = NULL;
 
-    char       *s = history_buf->data;
-    int         i;
+	char	   *s = history_buf->data;
+	int			i;
 
-    /* Trim any trailing \n's (OK to scribble on history_buf) */
-    for (i = strlen(s) - 1; i >= 0 && s[i] == '\n'; i--)
-        ;
-    s[i + 1] = '\0';
+	/* Trim any trailing \n's (OK to scribble on history_buf) */
+	for (i = strlen(s) - 1; i >= 0 && s[i] == '\n'; i--)
+		;
+	s[i + 1] = '\0';
 
-    if (s[0])
-    {
-        if (((fset.histcontrol & hctl_ignorespace) &&
-             s[0] == ' ') ||
-            ((fset.histcontrol & hctl_ignoredups) &&
-             prev_hist && strcmp(s, prev_hist) == 0))
-        {
-            /* Ignore this line as far as history is concerned */
-        }
-        else
-        {
-            /* Save each previous line for ignoredups processing */
-            if (prev_hist)
-                free(prev_hist);
+	if (s[0])
+	{
+		if (((fset.histcontrol & hctl_ignorespace) &&
+			 s[0] == ' ') ||
+			((fset.histcontrol & hctl_ignoredups) &&
+			 prev_hist && strcmp(s, prev_hist) == 0))
+		{
+			/* Ignore this line as far as history is concerned */
+		}
+		else
+		{
+			/* Save each previous line for ignoredups processing */
+			if (prev_hist)
+				free(prev_hist);
 
-            prev_hist = strdup(s);
-            add_history(history_buf->data);
-        }
-    }
-    resetFQExpBuffer(history_buf);
+			prev_hist = strdup(s);
+			add_history(history_buf->data);
+		}
+	}
+	resetFQExpBuffer(history_buf);
 }
 
 
@@ -124,17 +124,17 @@ send_history(FQExpBuffer history_buf)
 bool
 fetch_history(char *fname)
 {
-    if (fname && strcmp(fname, DEVNULL) != 0)
-    {
-        errno = 0;
+	if (fname && strcmp(fname, DEVNULL) != 0)
+	{
+		errno = 0;
 
-        (void) read_history(fname);
+		(void) read_history(fname);
 
-        if (errno == 0)
-            return true;
-    }
+		if (errno == 0)
+			return true;
+	}
 
-    return false;
+	return false;
 }
 
 
@@ -146,17 +146,16 @@ fetch_history(char *fname)
 bool
 save_history(char *fname)
 {
+	if (fname && strcmp(fname, DEVNULL) != 0)
+	{
+		errno = 0;
 
-    if (fname && strcmp(fname, DEVNULL) != 0)
-    {
-        errno = 0;
+		(void) write_history(fname);
 
-        (void) write_history(fname);
+		if (errno == 0)
+			return true;
+	}
 
-        if (errno == 0)
-            return true;
-    }
-
-    return false;
+	return false;
 }
 

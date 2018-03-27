@@ -46,82 +46,82 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt);
 bool
 SendQuery(const char *query)
 {
-    FQresult   *query_result;
-    query_time  before, after;
-    double      elapsed_msec = 0;
+	FQresult   *query_result;
+	query_time	before, after;
+	double		elapsed_msec = 0;
 
-    char *expbuffer;
+	char *expbuffer;
 
-    if(fset.timing)
-        gettimeofday(&before, NULL);
+	if(fset.timing)
+		gettimeofday(&before, NULL);
 
-    query_result = FQexec(fset.conn, query);
+	query_result = FQexec(fset.conn, query);
 
-    switch(FQresultStatus(query_result))
-    {
-        case FBRES_EMPTY_QUERY:
-        case FBRES_BAD_RESPONSE:
-        case FBRES_NONFATAL_ERROR:
-        case FBRES_FATAL_ERROR:
-            printf("%s\n", FQresultErrorMessage(query_result));
-            /* XXX TODO: make nicer */
+	switch(FQresultStatus(query_result))
+	{
+		case FBRES_EMPTY_QUERY:
+		case FBRES_BAD_RESPONSE:
+		case FBRES_NONFATAL_ERROR:
+		case FBRES_FATAL_ERROR:
+			printf("%s\n", FQresultErrorMessage(query_result));
+			/* XXX TODO: make nicer */
 
-            FQresultDumpErrorFields(fset.conn, query_result);
-            FQclear(query_result);
-            return false;
+			FQresultDumpErrorFields(fset.conn, query_result);
+			FQclear(query_result);
+			return false;
 
-        case FBRES_TUPLES_OK:
-            if(fset.plan_display != PLAN_DISPLAY_ONLY)
-            {
-                printQuery(query_result, &fset.popt);
-                printf("(%i rows)\n", FQntuples(query_result));
-            }
+		case FBRES_TUPLES_OK:
+			if(fset.plan_display != PLAN_DISPLAY_ONLY)
+			{
+				printQuery(query_result, &fset.popt);
+				printf("(%i rows)\n", FQntuples(query_result));
+			}
 
-            if(fset.plan_display != PLAN_DISPLAY_OFF)
-            {
-                expbuffer = FQexplainStatement(fset.conn, query);
-                if(expbuffer != NULL)
-                {
-                    puts(expbuffer);
-                    free(expbuffer);
-                }
-            }
-            break;
+			if(fset.plan_display != PLAN_DISPLAY_OFF)
+			{
+				expbuffer = FQexplainStatement(fset.conn, query);
+				if(expbuffer != NULL)
+				{
+					puts(expbuffer);
+					free(expbuffer);
+				}
+			}
+			break;
 
-        case FBRES_COMMAND_OK:
-            puts("");
-            break;
-        case FBRES_TRANSACTION_START:
-            puts("START");
-            break;
-        case FBRES_TRANSACTION_COMMIT:
-            puts("COMMIT");
-            break;
-        case FBRES_TRANSACTION_ROLLBACK:
-            puts("ROLLBACK");
-            break;
-        default:
-            /* should never reach here */
-            puts("Unexpected result code");
-    }
+		case FBRES_COMMAND_OK:
+			puts("");
+			break;
+		case FBRES_TRANSACTION_START:
+			puts("START");
+			break;
+		case FBRES_TRANSACTION_COMMIT:
+			puts("COMMIT");
+			break;
+		case FBRES_TRANSACTION_ROLLBACK:
+			puts("ROLLBACK");
+			break;
+		default:
+			/* should never reach here */
+			puts("Unexpected result code");
+	}
 
-    /*if(fset.conn->trans == 0L)
-        puts("no transaction");
-    else
-    puts("in transaction");*/
+	/*if(fset.conn->trans == 0L)
+		puts("no transaction");
+	else
+	puts("in transaction");*/
 
 
-    FQclear(query_result);
+	FQclear(query_result);
 
-    if(fset.timing)
-    {
-        gettimeofday(&after, NULL);
-        INSTR_TIME_SUBTRACT(after, before);
-        elapsed_msec = INSTR_TIME_GET_MILLISEC(after);
-        printf("Time: %.3f ms\n", elapsed_msec);
-    }
+	if(fset.timing)
+	{
+		gettimeofday(&after, NULL);
+		INSTR_TIME_SUBTRACT(after, before);
+		elapsed_msec = INSTR_TIME_GET_MILLISEC(after);
+		printf("Time: %.3f ms\n", elapsed_msec);
+	}
 
-    return true;
+	return true;
 }
 
 
@@ -134,37 +134,37 @@ SendQuery(const char *query)
 void
 printQuery(const FQresult *query_result, const printQueryOpt *pqopt)
 {
-    int i, nfields, ntuples;
+	int i, nfields, ntuples;
 
-    /* Print header */
-    _printTableHeader(query_result, pqopt);
+	/* Print header */
+	_printTableHeader(query_result, pqopt);
 
-    /* Print data rows */
-    ntuples = FQntuples(query_result);
-    nfields = FQnfields(query_result);
+	/* Print data rows */
+	ntuples = FQntuples(query_result);
+	nfields = FQnfields(query_result);
 
-    for(i = 0; i < ntuples; i++)
-    {
-        int j;
+	for(i = 0; i < ntuples; i++)
+	{
+		int j;
 
-        for(j = 0; j < nfields; j++)
-        {
+		for(j = 0; j < nfields; j++)
+		{
 
-            if(j)
-                printf("%s", pqopt->topt.border_format->divider);
+			if(j)
+				printf("%s", pqopt->topt.border_format->divider);
 
-            if(FQgetisnull(query_result, i, j))
-            {
-                printf("%s", _formatColumn(query_result, i, j, pqopt->nullPrint, false));
-            }
-            else
-            {
-                char *value = FQgetvalue(query_result, i, j);
-                printf("%s", _formatColumn(query_result, i, j, value, false));
-            }
-        }
-        puts("");
-    }
+			if(FQgetisnull(query_result, i, j))
+			{
+				printf("%s", _formatColumn(query_result, i, j, pqopt->nullPrint, false));
+			}
+			else
+			{
+				char *value = FQgetvalue(query_result, i, j);
+				printf("%s", _formatColumn(query_result, i, j, value, false));
+			}
+		}
+		puts("");
+	}
 }
 
 
@@ -176,61 +176,61 @@ printQuery(const FQresult *query_result, const printQueryOpt *pqopt)
 static char *
 _formatColumn(const FQresult *query_result, int row, int column, char *value, bool for_header)
 {
-    int value_len, column_byte_width, column_max_width;
-    char *result;
-    char *formatted_value;
-    char format[32];
+	int value_len, column_byte_width, column_max_width;
+	char *result;
+	char *formatted_value;
+	char format[32];
 
-    formatted_value = _formatValue(query_result, row, column, value, for_header);
+	formatted_value = _formatValue(query_result, row, column, value, for_header);
 
-    if(value == NULL)
-        value_len = 0;
-    else
-        value_len = strlen(formatted_value);
+	if(value == NULL)
+		value_len = 0;
+	else
+		value_len = strlen(formatted_value);
 
-    column_max_width = _getColumnMaxWidth(query_result, column);
+	column_max_width = _getColumnMaxWidth(query_result, column);
 
-    if(for_header == true
-    || FQgetisnull(query_result, row, column))
-        column_byte_width = value_len + (column_max_width - FQdspstrlen(formatted_value, FQclientEncodingId(fset.conn)));
-    else
-        column_byte_width = value_len + (column_max_width - FQgetdsplen(query_result, row, column));
+	if(for_header == true
+	|| FQgetisnull(query_result, row, column))
+		column_byte_width = value_len + (column_max_width - FQdspstrlen(formatted_value, FQclientEncodingId(fset.conn)));
+	else
+		column_byte_width = value_len + (column_max_width - FQgetdsplen(query_result, row, column));
 
-    if(fset.popt.topt.format == PRINT_ALIGNED)
-    {
-        switch(FQftype(query_result, column))
-        {
-            case SQL_SHORT:
-            case SQL_LONG:
-            case SQL_INT64:
-            case SQL_FLOAT:
-            case SQL_DOUBLE:
-                /* right-justify numbers */
-                sprintf(format,"%s%%%is%s",
-                        fset.popt.topt.border_format->padding ? " " : "",
-                        column_max_width,
-                        fset.popt.topt.border_format->padding ? " " : "");
-                break;
+	if(fset.popt.topt.format == PRINT_ALIGNED)
+	{
+		switch(FQftype(query_result, column))
+		{
+			case SQL_SHORT:
+			case SQL_LONG:
+			case SQL_INT64:
+			case SQL_FLOAT:
+			case SQL_DOUBLE:
+				/* right-justify numbers */
+				sprintf(format,"%s%%%is%s",
+						fset.popt.topt.border_format->padding ? " " : "",
+						column_max_width,
+						fset.popt.topt.border_format->padding ? " " : "");
+				break;
 
-            default:
-                sprintf(format,"%s%%-%is%s",
-                        fset.popt.topt.border_format->padding ? " " : "",
-                        column_byte_width,
-                        fset.popt.topt.border_format->padding ? " " : "");
-        }
-    }
-    else
-    {
-        sprintf(format,"%%s");
-    }
+			default:
+				sprintf(format,"%s%%-%is%s",
+						fset.popt.topt.border_format->padding ? " " : "",
+						column_byte_width,
+						fset.popt.topt.border_format->padding ? " " : "");
+		}
+	}
+	else
+	{
+		sprintf(format,"%%s");
+	}
 
-    result = (char *)malloc(column_byte_width + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
+	result = (char *)malloc(column_byte_width + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
 
-    sprintf(result, format, formatted_value);
-    if(formatted_value != NULL)
-        free(formatted_value);
+	sprintf(result, format, formatted_value);
+	if(formatted_value != NULL)
+		free(formatted_value);
 
-    return result;
+	return result;
 }
 
 
@@ -244,22 +244,22 @@ _formatColumn(const FQresult *query_result, int row, int column, char *value, bo
 static char *
 _formatValue(const FQresult *query_result, int row, int column, const char *value, bool for_header)
 {
-    char *formatted_value;
+	char *formatted_value;
 
-    if(for_header == false && FQftype(query_result, column) == SQL_DB_KEY)
-    {
-        char *src = FQformatDbKey(query_result, row, column);
-        formatted_value = (char *)malloc(strlen(src) + 1);
-        sprintf(formatted_value, "%s", src);
-        free(src);
-    }
-    else
-    {
-        formatted_value = (char *)malloc(strlen(value) + 1);
-        sprintf(formatted_value, "%s", value);
-    }
+	if(for_header == false && FQftype(query_result, column) == SQL_DB_KEY)
+	{
+		char *src = FQformatDbKey(query_result, row, column);
+		formatted_value = (char *)malloc(strlen(src) + 1);
+		sprintf(formatted_value, "%s", src);
+		free(src);
+	}
+	else
+	{
+		formatted_value = (char *)malloc(strlen(value) + 1);
+		sprintf(formatted_value, "%s", value);
+	}
 
-    return formatted_value;
+	return formatted_value;
 }
 
 
@@ -271,22 +271,22 @@ _formatValue(const FQresult *query_result, int row, int column, const char *valu
 static char *
 _formatColumnHeaderUnderline(const FQresult *query_result, int column)
 {
-    int column_max_len, i;
-    char *underline;
+	int column_max_len, i;
+	char *underline;
 
-    column_max_len = _getColumnMaxWidth(query_result, column)
-        + (fset.popt.topt.border_format->padding ? 2 : 0);
+	column_max_len = _getColumnMaxWidth(query_result, column)
+		+ (fset.popt.topt.border_format->padding ? 2 : 0);
 
-    underline = malloc(column_max_len + 1);
+	underline = malloc(column_max_len + 1);
 
-    for(i = 0; i < column_max_len; i++)
-    {
-        underline[i] = fset.popt.topt.border_format->header_underline[0];
-    }
+	for(i = 0; i < column_max_len; i++)
+	{
+		underline[i] = fset.popt.topt.border_format->header_underline[0];
+	}
 
-    underline[i] = '\0';
+	underline[i] = '\0';
 
-    return underline;
+	return underline;
 }
 
 
@@ -300,27 +300,27 @@ _formatColumnHeaderUnderline(const FQresult *query_result, int column)
 static int
 _getColumnMaxWidth(const FQresult *query_result, int column)
 {
-    int max_width;
+	int max_width;
 
-    /* Columns containing the RDB$DB_KEY value will always be fixed-width */
-    if(FQftype(query_result, column) == SQL_DB_KEY)
-    {
-        return FB_DB_KEY_LEN;
-    }
+	/* Columns containing the RDB$DB_KEY value will always be fixed-width */
+	if(FQftype(query_result, column) == SQL_DB_KEY)
+	{
+		return FB_DB_KEY_LEN;
+	}
 
-    max_width = FQfmaxwidth(query_result, column);
+	max_width = FQfmaxwidth(query_result, column);
 
-    /* check if column has null values, and if so check whether the
-       null display value is wider
-     */
-    if(FQfhasNull(query_result, column) == true)
-    {
-        int null_width = strlen(fset.popt.nullPrint);
-        if(null_width > max_width)
-            max_width = null_width;
-    }
+	/* check if column has null values, and if so check whether the
+	   null display value is wider
+	 */
+	if(FQfhasNull(query_result, column) == true)
+	{
+		int null_width = strlen(fset.popt.nullPrint);
+		if(null_width > max_width)
+			max_width = null_width;
+	}
 
-    return max_width;
+	return max_width;
 }
 
 
@@ -333,95 +333,94 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
 {
     int i;
 
+	/* No tuples returned - no header info available :(
+	   Not sure if there is a work around to get the header info
+	   in this case */
+	if(FQntuples(query_result) == 0)
+		return;
 
-    /* No tuples returned - no header info available :(
-       Not sure if there is a work around to get the header info
-       in this case */
-    if(FQntuples(query_result) == 0)
-        return;
+	/* Print overall table header, if set */
+	if(pqopt->header != NULL)
+	{
+		if(pqopt->topt.format == PRINT_ALIGNED)
+		{
+			int width = 0;
+			char format[32];
+			/* Calculate max width */
+			for(i = 0; i < FQnfields(query_result); i++)
+			{
+				width += _getColumnMaxWidth(query_result, i);
+			}
 
-    /* Print overall table header, if set */
-    if(pqopt->header != NULL)
-    {
-        if(pqopt->topt.format == PRINT_ALIGNED)
-        {
-            int width = 0;
-            char format[32];
-            /* Calculate max width */
-            for(i = 0; i < FQnfields(query_result); i++)
-            {
-                width += _getColumnMaxWidth(query_result, i);
-            }
+			/* Add padding and border column width */
+			width += (FQnfields(query_result) * 3);
 
-            /* Add padding and border column width */
-            width += (FQnfields(query_result) * 3);
+			sprintf(format,"%%%is\n",
+					width - ((width - (int)strlen(pqopt->header)) / 2)
+				);
+			printf(format, pqopt->header);
+		}
+		else
+		{
+			printf("%s\n", pqopt->header);
+		}
+	}
 
-            sprintf(format,"%%%is\n",
-                    width - ((width - (int)strlen(pqopt->header)) / 2)
-                );
-            printf(format, pqopt->header);
-        }
-        else
-        {
-            printf("%s\n", pqopt->header);
-        }
-    }
+	/* Print column headers */
 
-    /* Print column headers */
+	for(i = 0; i < FQnfields(query_result); i++)
+	{
+		char *p = NULL;
+		char *column_name = FQfname(query_result, i);
+		char *column_name_lc = NULL;
 
-    for(i = 0; i < FQnfields(query_result); i++)
-    {
-        char *p = NULL;
-        char *column_name = FQfname(query_result, i);
-        char *column_name_lc = NULL;
+		if(i)
+			printf("%s", pqopt->topt.border_format->divider);
 
-        if(i)
-            printf("%s", pqopt->topt.border_format->divider);
+		/* Fold columns to lower case. This will not fold mixed-case columns
+		   which were explicitly quoted, but any upper-case columns quoted
+		   on creation will be converted to lower-case. Not sure if the
+		   API provides any way of detecting whether column names were quoted.
+		 */
+		if(fset.lc_fold == true)
+		{
+			column_name_lc = (char *)malloc(strlen(column_name) + 1);
+			strcpy(column_name_lc, column_name);
 
-        /* Fold columns to lower case. This will not fold mixed-case columns
-           which were explicitly quoted, but any upper-case columns quoted
-           on creation will be converted to lower-case. Not sure if the
-           API provides any way of detecting whether column names were quoted.
-         */
-        if(fset.lc_fold == true)
-        {
-            column_name_lc = (char *)malloc(strlen(column_name) + 1);
-            strcpy(column_name_lc, column_name);
+			for(p = column_name_lc; *p; p++)
+			{
+				*p = toupper((unsigned char) *p);
+			}
 
-            for(p = column_name_lc; *p; p++)
-            {
-                *p = toupper((unsigned char) *p);
-            }
+			if(strncmp(column_name_lc, column_name, strlen(column_name)) == 0)
+			{
+				for(p = column_name_lc; *p; p++)
+				{
+					*p = tolower((unsigned char) *p);
+				}
+				column_name = column_name_lc;
+			}
+		}
 
-            if(strncmp(column_name_lc, column_name, strlen(column_name)) == 0)
-            {
-                for(p = column_name_lc; *p; p++)
-                {
-                    *p = tolower((unsigned char) *p);
-                }
-                column_name = column_name_lc;
-            }
-        }
+		printf("%s", _formatColumn(query_result, 0, i, column_name, true));
 
-        printf("%s", _formatColumn(query_result, 0, i, column_name, true));
+		if(fset.lc_fold == true)
+			free(column_name_lc);
+	}
 
-        if(fset.lc_fold == true)
-            free(column_name_lc);
-    }
+	puts("");
 
-    puts("");
+	/* print column header underline (PRINT_ALIGNED mode only) */
+	if(pqopt->topt.format == PRINT_ALIGNED)
+	{
+		for(i = 0; i < FQnfields(query_result); i++)
+		{
+			if(i)
+				printf("%s", pqopt->topt.border_format->junction);
 
-    /* print column header underline (PRINT_ALIGNED mode only) */
-    if(pqopt->topt.format == PRINT_ALIGNED)
-    {
-        for(i = 0; i < FQnfields(query_result); i++)
-        {
-            if(i)
-                printf("%s", pqopt->topt.border_format->junction);
+			printf("%s", _formatColumnHeaderUnderline(query_result, i));
+		}
 
-            printf("%s", _formatColumnHeaderUnderline(query_result, i));
-        }
-
-        puts("");
-    }
+		puts("");
+	}
 }

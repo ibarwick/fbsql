@@ -66,7 +66,7 @@ handle_signals(int signo)
 	if (sigint_interrupt_enabled)
 	{
 		sigint_interrupt_enabled = false;
-        printf("\n");
+		printf("\n");
 		siglongjmp(sigint_interrupt_jmp, 1);
 	}
 
@@ -84,7 +84,7 @@ handle_signals(int signo)
 char *
 get_home_path()
 {
-	char          pwdbuf[1024];
+	char		  pwdbuf[1024];
 	struct passwd pwdstr;
 	struct passwd *pwd = NULL;
 	char *home_path;
@@ -106,11 +106,11 @@ get_home_path()
 void *
 fb_malloc0(size_t size)
 {
-	void       *tmp;
+	void	   *tmp;
 
 	tmp = malloc(size);
-    if(tmp != NULL)
-        memset(tmp, 0, size);
+	if (tmp != NULL)
+		memset(tmp, 0, size);
 	return tmp;
 }
 
@@ -139,14 +139,15 @@ fbsql_error(const char *fmt,...)
  * Initialise the user-definable settings.
  */
 void
-init_settings(void) {
+init_settings(void)
+{
 	fset.timing = true;
 	fset.quiet = false;
 	fset.lc_fold = true;
 	fset.autocommit = true;
 
 /* provisional sane default value */
-    fset.client_encoding = "UTF-8";
+	fset.client_encoding = "UTF-8";
 	fset.popt.nullPrint = strdup("NULL");
 	fset.popt.header = NULL;
 
@@ -157,12 +158,13 @@ init_settings(void) {
 	/* TODO: add sanity checking and fallbacks */
 	fset.home_path = get_home_path();
 
-	if(fset.home_path != NULL)
+	if (fset.home_path != NULL)
 	{
 		fset.fbsql_history = (char *)malloc(strlen(fset.home_path) + 1 + strlen(FBSQL_HISTORY) + 1);
 		sprintf(fset.fbsql_history, "%s/%s", fset.home_path, FBSQL_HISTORY);
 	}
-	else {
+	else
+    {
 		puts("init_settings(): unable to get home directory");
 	}
 
@@ -180,7 +182,8 @@ init_settings(void) {
 const printTextFormat *
 _getBorderFormat()
 {
-	const printTextFormat *border_format;
+    const printTextFormat *border_format;
+
 	switch(fset.popt.topt.border)
 	{
 		case BORDER_CLASSIC:
