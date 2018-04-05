@@ -481,8 +481,11 @@ do_format(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 	{
 		if (value)
 		{
+			int value_len = strlen(value);
+
 			free(popt->nullPrint);
-			popt->nullPrint = (char *)strdup(value);
+			popt->nullPrint = malloc(value_len);
+			strncpy(popt->nullPrint, value, value_len);
 		}
 		if (!quiet)
 			printf("Null display is \"%s\".\n", popt->nullPrint ? popt->nullPrint : "");
@@ -548,7 +551,7 @@ _wildcard_pattern_clause(char *pattern, char *field, FQExpBufferData *buf)
 	{
 		char *like_pattern = malloc(pattern_len);
 
-		snprintf(like_pattern, pattern_len, "%s", pattern);
+		strncpy(like_pattern, pattern, pattern_len);
 
 		appendFQExpBuffer(buf,
 						  "			 AND TRIM(LOWER(%s)) LIKE TRIM(LOWER('%s%%'))\n",
@@ -1461,7 +1464,7 @@ _listIndexSegments(char *index_name)
 		FQclear(query_result);
 
 	result = malloc(strlen(buf.data) + 1);
-	snprintf(result, strlen(buf.data) + 1, "%s", buf.data);
+	strncpy(result, buf.data, strlen(buf.data) + 1);
 	termFQExpBuffer(&buf);
 
 	return result;
