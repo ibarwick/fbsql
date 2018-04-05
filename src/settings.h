@@ -65,7 +65,7 @@ typedef enum
 
 typedef struct _fbsqlSettings
 {
-	FQconn			 *conn;
+	FBconn			 *conn;
 	char			 *sversion;
 	char			 *dbpath;
 	char			 *username;
