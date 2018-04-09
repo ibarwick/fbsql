@@ -110,6 +110,28 @@ main(int argc, char *argv[])
 
 	printf("Connected to Firebird v%s (libfq version %s)\n", fset.sversion, FQlibVersionString());
 
+	{
+		FBresult   *query_result;
+		char *dump;
+		char *query = "wibble";
+		//char *query = "SELECT * FROM wibble";
+		query_result = FQexec(fset.conn, query);
+
+		printf("%s\n", FQresStatus(FQresultStatus(query_result)));
+
+		dump = FQresultErrorFieldsAsString(query_result, "-");
+		printf("%s\n", dump);
+		free(dump);
+
+		printf("%s\n", FQerrorMessage(fset.conn));
+
+		printf("%i\n", FQsqlCode(query_result));
+
+		FQclear(query_result);
+		puts("bye");
+		exit(0);
+	}
+
 	FQsetAutocommit(fset.conn, fset.autocommit);
 
 	result = InputLoop(stdin);
