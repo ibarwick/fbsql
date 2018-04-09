@@ -653,7 +653,7 @@ complete_from_query(const char *text, int state)
 {
 	static int	list_index,
 				string_length;
-	static FQresult *result = NULL;
+	static FBresult *result = NULL;
 	char			*query;
 
 	if (state == 0)

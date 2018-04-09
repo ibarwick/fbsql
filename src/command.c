@@ -27,7 +27,7 @@
 #include "common.h"
 
 
-static FQresult* commandExec(const char *query);
+static FBresult* commandExec(const char *query);
 static void commandExecPrint(const char *query, const printQueryOpt *pqopt);
 
 static void showUsage(void);
@@ -68,7 +68,7 @@ static char *_sqlFieldType(void);
 static void _command_test(const char *param);
 static void _command_test_ins(void);
 
-static FQresult*
+static FBresult*
 commandExec(const char *query)
 {
 	if (fset.echo_hidden == true)
@@ -81,7 +81,7 @@ commandExec(const char *query)
 static void
 commandExecPrint(const char *query, const printQueryOpt *pqopt)
 {
-	FQresult   *query_result;
+	FBresult   *query_result;
 
 	query_result = commandExec(query);
 
@@ -732,7 +732,7 @@ describeObject(char *name)
 							  1);
 
 	char *type;
-	FQresult   *query_result;
+	FBresult   *query_result;
 
 	/* get object's type */
 
@@ -796,7 +796,7 @@ _describeObject(char *name, char *object_type, char *query)
 void
 describeTable(char *name)
 {
-	FQresult   *query_result;
+	FBresult   *query_result;
 	FQExpBufferData buf;
 	initFQExpBuffer(&buf);
 
@@ -1022,7 +1022,7 @@ describeTable(char *name)
 void
 describeIndex(char *name)
 {
-	FQresult   *query_result;
+	FBresult   *query_result;
 	FQExpBufferData buf;
 
 	/* Display field information */
@@ -1166,7 +1166,7 @@ execUtil(char *command)
 static bool
 _execUtilSetIndexStatistics(void)
 {
-	FQresult *res;
+	FBresult *res;
 	char *query = \
 "EXECUTE BLOCK AS \n"
 "  DECLARE VARIABLE index_name VARCHAR(31); \n"
@@ -1429,7 +1429,7 @@ listViews(char *pattern)
 static char *
 _listIndexSegments(char *index_name)
 {
-	FQresult   *query_result;
+	FBresult   *query_result;
 	FQExpBufferData buf;
 	char *result;
 
@@ -1520,7 +1520,7 @@ _sqlFieldType(void)
 void
 _command_test_ins()
 {
-	FQresult	  *result;
+	FBresult	  *result;
 	const char *paramValues[2];
 
 	paramValues[0] = "99";
@@ -1561,7 +1561,7 @@ _command_test(const char *param)
 void
 _command_test_param(char *param)
 {
-	FQresult	  *result;
+	FBresult	  *result;
 	printQueryOpt pqopt = fset.popt;
 	const char *paramValues[2];
 	//const char **paramValues;
@@ -1573,7 +1573,7 @@ _command_test_param(char *param)
 
 	const char *db_key_sql = "SELECT rdb$db_key FROM language WHERE lang_id='en'";
 	char *db_key;
-	FQresult *query_result;
+	FBresult *query_result;
 
 	const int paramFormats[2] = { 0, -1 };
 

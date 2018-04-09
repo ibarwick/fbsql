@@ -10,7 +10,7 @@ extern bool
 SendQuery(const char *query);
 
 extern void
-printQuery(const FQresult *query_result, const printQueryOpt *pqopt);
+printQuery(const FBresult *query_result, const printQueryOpt *pqopt);
 
 #define INSTR_TIME_SUBTRACT(x,y) \
 	do { \

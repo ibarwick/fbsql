@@ -22,19 +22,19 @@
 
 
 static char *
-_formatColumn(const FQresult *query_result, int row, int column, char *value, bool for_header);
+_formatColumn(const FBresult *query_result, int row, int column, char *value, bool for_header);
 
 static char *
-_formatValue(const FQresult *query_result, int row, int column, const char *value, bool for_header);
+_formatValue(const FBresult *query_result, int row, int column, const char *value, bool for_header);
 
 static char *
-_formatColumnHeaderUnderline(const FQresult *query_result, int column);
+_formatColumnHeaderUnderline(const FBresult *query_result, int column);
 
 static int
-_getColumnMaxWidth(const FQresult *query_result, int column);
+_getColumnMaxWidth(const FBresult *query_result, int column);
 
 static void
-_printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt);
+_printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt);
 
 
 /**
@@ -46,7 +46,7 @@ _printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt);
 bool
 SendQuery(const char *query)
 {
-	FQresult   *query_result;
+	FBresult   *query_result;
 	query_time	before, after;
 	double		elapsed_msec = 0;
 
@@ -132,7 +132,7 @@ SendQuery(const char *query)
  * formatting options.
  */
 void
-printQuery(const FQresult *query_result, const printQueryOpt *pqopt)
+printQuery(const FBresult *query_result, const printQueryOpt *pqopt)
 {
 	int i, nfields, ntuples;
 
@@ -174,7 +174,7 @@ printQuery(const FQresult *query_result, const printQueryOpt *pqopt)
  * Format column for display - padding and column value
  */
 static char *
-_formatColumn(const FQresult *query_result, int row, int column, char *value, bool for_header)
+_formatColumn(const FBresult *query_result, int row, int column, char *value, bool for_header)
 {
 	int value_len, column_byte_width, column_max_width;
 	char *result;
@@ -242,7 +242,7 @@ _formatColumn(const FQresult *query_result, int row, int column, char *value, bo
  * This ensures SQL_DB_KEY values are rendered correctly
  */
 static char *
-_formatValue(const FQresult *query_result, int row, int column, const char *value, bool for_header)
+_formatValue(const FBresult *query_result, int row, int column, const char *value, bool for_header)
 {
 	char *formatted_value;
 
@@ -269,7 +269,7 @@ _formatValue(const FQresult *query_result, int row, int column, const char *valu
  * Generate underline bar for a column header
  */
 static char *
-_formatColumnHeaderUnderline(const FQresult *query_result, int column)
+_formatColumnHeaderUnderline(const FBresult *query_result, int column)
 {
 	int column_max_len, i;
 	char *underline;
@@ -298,7 +298,7 @@ _formatColumnHeaderUnderline(const FQresult *query_result, int column)
  * identifier if it has NULL values.
  */
 static int
-_getColumnMaxWidth(const FQresult *query_result, int column)
+_getColumnMaxWidth(const FBresult *query_result, int column)
 {
 	int max_width;
 
@@ -329,7 +329,7 @@ _getColumnMaxWidth(const FQresult *query_result, int column)
  *
  */
 static void
-_printTableHeader(const FQresult *query_result, const printQueryOpt *pqopt)
+_printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt)
 {
     int i;
 
