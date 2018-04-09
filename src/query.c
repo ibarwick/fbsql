@@ -64,22 +64,7 @@ SendQuery(const char *query)
 		case FBRES_NONFATAL_ERROR:
 		case FBRES_FATAL_ERROR:
 		{
-			char *error_field;
-
 			printf("%s\n", FQresultErrorMessage(query_result));
-
-			error_field = FQresultErrorField(query_result, FB_DIAG_MESSAGE_PRIMARY);
-			if (error_field != NULL)
-			{
-				printf("ERROR: %s\n", error_field);
-
-				error_field = FQresultErrorField(query_result, FB_DIAG_MESSAGE_DETAIL);
-				if (error_field != NULL)
-				{
-					printf("DETAIL: %s\n", error_field);
-				}
-			}
-
 			/* TODO: print line/column info, when available from libfq */
 			FQclear(query_result);
 			return false;
