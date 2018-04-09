@@ -1606,7 +1606,7 @@ _command_test_param(char *param)
 	if (FQresultStatus(result) == FBRES_FATAL_ERROR)
 	{
 		printf("%s\n", FQresultErrorMessage(result));
-		FQresultDumpErrorFields(fset.conn, result);
+		printf("%s\n", FQresultErrorFieldsAsString(result, "-"));
 	}
 	printf("%i rows returned\n", FQntuples(result));
 

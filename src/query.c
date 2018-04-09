@@ -63,13 +63,27 @@ SendQuery(const char *query)
 		case FBRES_BAD_RESPONSE:
 		case FBRES_NONFATAL_ERROR:
 		case FBRES_FATAL_ERROR:
-			printf("%s\n", FQresultErrorMessage(query_result));
-			/* XXX TODO: make nicer */
+		{
+			char *error_field;
 
-			FQresultDumpErrorFields(fset.conn, query_result);
+			printf("%s\n", FQresultErrorMessage(query_result));
+
+			error_field = FQresultErrorField(query_result, FB_DIAG_MESSAGE_PRIMARY);
+			if (error_field != NULL)
+			{
+				printf("ERROR: %s\n", error_field);
+
+				error_field = FQresultErrorField(query_result, FB_DIAG_MESSAGE_DETAIL);
+				if (error_field != NULL)
+				{
+					printf("DETAIL: %s\n", error_field);
+				}
+			}
+
+			/* TODO: print line/column info, when available from libfq */
 			FQclear(query_result);
 			return false;
-
+		}
 		case FBRES_TUPLES_OK:
 			if(fset.plan_display != PLAN_DISPLAY_ONLY)
 			{
