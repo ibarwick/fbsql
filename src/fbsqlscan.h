@@ -1,8 +1,8 @@
 #ifndef FBSQLSCAN_H
 #define FBSQLSCAN_H
 
-
 #include "libfq.h"
+#include "port.h"
 
 /* Abstract type for lexer's internal state */
 typedef struct FbsqlScanStateData *FbsqlScanState;
