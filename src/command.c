@@ -752,7 +752,6 @@ describeObject(char *name)
 	}
 
 	type = FQgetvalue(query_result, 0, 0);
-	FQclear(query_result);
 
 	switch(type[0])
 	{
@@ -766,8 +765,10 @@ describeObject(char *name)
 			describeIndex(name);
 			break;
 		default:
-			puts("Unknown object");
+			printf("Unknown object type %c\n", type[0]);
 	}
+
+	FQclear(query_result);
 }
 
 
