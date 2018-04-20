@@ -86,14 +86,16 @@ commandExecPrint(const char *query, const printQueryOpt *pqopt)
 	query_result = commandExec(query);
 
 	/* XXX fails silently... may want to add error handling */
-	if (query_result == NULL)
+
+	if (FQresultStatus(query_result) != FBRES_TUPLES_OK)
+	{
+		FQclear(query_result);
 		return;
+	}
 
 	if (FQntuples(query_result))
 	{
 		printQuery(query_result, pqopt);
-
-		FQclear(query_result);
 
 		puts("");
 	}
@@ -101,6 +103,8 @@ commandExecPrint(const char *query, const printQueryOpt *pqopt)
 	{
 		puts("No items found");
 	}
+
+	FQclear(query_result);
 }
 
 
@@ -841,7 +845,7 @@ describeTable(char *name)
 	query_result = commandExec(buf.data);
 	termFQExpBuffer(&buf);
 
-	if (query_result != NULL && FQntuples(query_result) > 0)
+	if (FQresultStatus(query_result) == FBRES_TUPLES_OK && FQntuples(query_result) > 0)
 	{
 		int row = 0;
 
@@ -874,8 +878,7 @@ describeTable(char *name)
 		}
 	}
 
-	if (query_result != NULL)
-		FQclear(query_result);
+	FQclear(query_result);
 
 	/* List foreign key constraints */
 	/* TODO: show associated index name? See FB book p300 */
@@ -909,7 +912,7 @@ describeTable(char *name)
 	query_result = commandExec(buf.data);
 	termFQExpBuffer(&buf);
 
-	if (query_result != NULL && FQntuples(query_result) > 0)
+	if (FQresultStatus(query_result) == FBRES_TUPLES_OK && FQntuples(query_result) > 0)
 	{
 		int row = 0;
 
@@ -959,8 +962,7 @@ describeTable(char *name)
 		}
 	}
 
-	if (query_result != NULL)
-		FQclear(query_result);
+	FQclear(query_result);
 
 
 	/* List triggers */
@@ -995,7 +997,7 @@ describeTable(char *name)
 	query_result = commandExec(buf.data);
 	termFQExpBuffer(&buf);
 
-	if (query_result != NULL && FQntuples(query_result) > 0)
+	if (FQresultStatus(query_result) == FBRES_TUPLES_OK && FQntuples(query_result) > 0)
 	{
 		int row = 0;
 
@@ -1012,8 +1014,9 @@ describeTable(char *name)
 			puts("");
 		}
 	}
-	if (query_result != NULL)
-		FQclear(query_result);
+
+
+	FQclear(query_result);
 
 	puts("");
 }
@@ -1071,7 +1074,7 @@ describeIndex(char *name)
 	query_result = commandExec(buf.data);
 	termFQExpBuffer(&buf);
 
-	if (query_result != NULL && FQntuples(query_result) > 0)
+	if (FQresultStatus(query_result) == FBRES_TUPLES_OK && FQntuples(query_result) > 0)
 	{
 		char *description;
 
@@ -1086,8 +1089,7 @@ describeIndex(char *name)
 				);
 	}
 
-	if (query_result != NULL)
-		FQclear(query_result);
+	FQclear(query_result);
 }
 
 
@@ -1095,6 +1097,7 @@ describeIndex(char *name)
 void
 describeSequence(char *name)
 {
+	puts("\\ds not yet implemented");
 }
 
 
@@ -1122,6 +1125,7 @@ describeView(char *name)
 "  ORDER BY rdb$field_position\n",
 					name
 		);
+
 	_describeObject(name, "View", buf.data);
 
 	termFQExpBuffer(&buf);
@@ -1179,9 +1183,12 @@ _execUtilSetIndexStatistics(void)
 	res = FQexec(fset.conn, query);
 	if (FQresultStatus(res) != FBRES_COMMAND_OK)
 	{
+		FQclear(res);
 		fbsql_error("error updating index statistics\n");
 		return false;
 	}
+
+	FQclear(res);
 
 	puts("Index statistics updated");
 
@@ -1447,22 +1454,23 @@ _listIndexSegments(char *index_name)
 	termFQExpBuffer(&buf);
 
 	initFQExpBuffer(&buf);
-	if (query_result != NULL && FQntuples(query_result) > 0)
+
+	if (FQresultStatus(query_result) == FBRES_TUPLES_OK && FQntuples(query_result) > 0)
 	{
 		int row = 0;
 		for(row = 0; row < FQntuples(query_result); row++)
 		{
 			if (row)
+			{
 				appendFQExpBuffer(&buf, ", ");
+			}
 
 			appendFQExpBuffer(&buf,
-							  FQgetvalue(query_result, row, 0)
-				);
+							  FQgetvalue(query_result, row, 0));
 		}
 	}
 
-	if (query_result != NULL)
-		FQclear(query_result);
+	FQclear(query_result);
 
 	result = malloc(strlen(buf.data) + 1);
 	strncpy(result, buf.data, strlen(buf.data) + 1);
