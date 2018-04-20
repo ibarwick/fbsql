@@ -92,7 +92,7 @@ InputLoop(FILE *source)
 			break;
 		}
 
-		if( query_buf->len == 0 &&	strncasecmp(line, "help", 4) == 0)
+		if (query_buf->len == 0 && strncasecmp(line, "help", 4) == 0)
 		{
 			free(line);
 			puts("This is fbsql, a command-line interface to Firebird.");
@@ -210,7 +210,7 @@ InputLoop(FILE *source)
 				}
 				else if (slashCmdStatus == FBSQL_CMD_TERMINATE)
 					break;
-				else if(slashCmdStatus == FBSQL_CMD_ERROR)
+				else if (slashCmdStatus == FBSQL_CMD_ERROR)
 					printf("Invalid slash command \"%s\". Show help with \\? \n", line);
 			}
 

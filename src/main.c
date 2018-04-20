@@ -65,7 +65,7 @@ main(int argc, char *argv[])
 	if (fset.dbpath == NULL)
 	{
 		fset.dbpath = getenv("ISC_DATABASE");
-		if(fset.dbpath == NULL) {
+		if (fset.dbpath == NULL) {
 			puts("need -d dbpath\n");
 			return 1;
 		}
@@ -74,7 +74,7 @@ main(int argc, char *argv[])
 	if (fset.username == NULL)
 	{
 		fset.username = getenv("ISC_USER");
-		if(fset.username == NULL) {
+		if (fset.username == NULL) {
 			puts("need -u username\n");
 			return 1;
 		}
@@ -97,11 +97,11 @@ main(int argc, char *argv[])
 
 	fset.conn = FQconnectdbParams(kw, val);
 
-	if(FQstatus(fset.conn) == CONNECTION_BAD)
+	if (FQstatus(fset.conn) == CONNECTION_BAD)
 	{
 		printf("Error connecting to '%s' as '%s'\n", fset.dbpath, fset.username);
 
-		return 1;
+		exit(1);
 	}
 
 	fset.sversion = FQserverVersionString(fset.conn);
@@ -110,35 +110,13 @@ main(int argc, char *argv[])
 
 	printf("Connected to Firebird v%s (libfq version %s)\n", fset.sversion, FQlibVersionString());
 
-	{
-		FBresult   *query_result;
-		char *dump;
-		char *query = "wibble";
-		//char *query = "SELECT * FROM wibble";
-		query_result = FQexec(fset.conn, query);
-
-		printf("%s\n", FQresStatus(FQresultStatus(query_result)));
-
-		dump = FQresultErrorFieldsAsString(query_result, "-");
-		printf("%s\n", dump);
-		free(dump);
-
-		printf("%s\n", FQerrorMessage(fset.conn));
-
-		printf("%i\n", FQsqlCode(query_result));
-
-		FQclear(query_result);
-		puts("bye");
-		exit(0);
-	}
-
 	FQsetAutocommit(fset.conn, fset.autocommit);
 
 	result = InputLoop(stdin);
 
 	save_history(fset.fbsql_history);
 
-	if(fset.conn->trans != 0L)
+	if (fset.conn->trans != 0L)
 		puts("Rolling back uncommitted transaction");
 
 	FQfinish(fset.conn);
@@ -265,12 +243,12 @@ usage(void)
 	printf("Connection options:\n");
 
 	printf("  -d, --dbname=DBNAME      database to connect to");
-	if(dbname)
+	if (dbname)
 		printf(" (default: \"%s\")", dbname);
 	printf("\n");
 
 	printf("  -u, --username=USERNAME  database user name");
-	if(username)
+	if (username)
 		  printf(" (default: \"%s\")", username);
 	printf("\n");
 

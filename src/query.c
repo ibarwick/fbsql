@@ -52,7 +52,7 @@ SendQuery(const char *query)
 
 	char *expbuffer;
 
-	if(fset.timing)
+	if (fset.timing)
 		gettimeofday(&before, NULL);
 
 	query_result = FQexec(fset.conn, query);
@@ -70,16 +70,16 @@ SendQuery(const char *query)
 			return false;
 		}
 		case FBRES_TUPLES_OK:
-			if(fset.plan_display != PLAN_DISPLAY_ONLY)
+			if (fset.plan_display != PLAN_DISPLAY_ONLY)
 			{
 				printQuery(query_result, &fset.popt);
 				printf("(%i rows)\n", FQntuples(query_result));
 			}
 
-			if(fset.plan_display != PLAN_DISPLAY_OFF)
+			if (fset.plan_display != PLAN_DISPLAY_OFF)
 			{
 				expbuffer = FQexplainStatement(fset.conn, query);
-				if(expbuffer != NULL)
+				if (expbuffer != NULL)
 				{
 					puts(expbuffer);
 					free(expbuffer);
@@ -104,7 +104,7 @@ SendQuery(const char *query)
 			puts("Unexpected result code");
 	}
 
-	/*if(fset.conn->trans == 0L)
+	/*if (fset.conn->trans == 0L)
 		puts("no transaction");
 	else
 	puts("in transaction");*/
@@ -112,7 +112,7 @@ SendQuery(const char *query)
 
 	FQclear(query_result);
 
-	if(fset.timing)
+	if (fset.timing)
 	{
 		gettimeofday(&after, NULL);
 		INSTR_TIME_SUBTRACT(after, before);
@@ -149,10 +149,10 @@ printQuery(const FBresult *query_result, const printQueryOpt *pqopt)
 		for(j = 0; j < nfields; j++)
 		{
 
-			if(j)
+			if (j)
 				printf("%s", pqopt->topt.border_format->divider);
 
-			if(FQgetisnull(query_result, i, j))
+			if (FQgetisnull(query_result, i, j))
 			{
 				printf("%s", _formatColumn(query_result, i, j, pqopt->nullPrint, false));
 			}
@@ -182,20 +182,20 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 
 	formatted_value = _formatValue(query_result, row, column, value, for_header);
 
-	if(value == NULL)
+	if (value == NULL)
 		value_len = 0;
 	else
 		value_len = strlen(formatted_value);
 
 	column_max_width = _getColumnMaxWidth(query_result, column);
 
-	if(for_header == true
+	if (for_header == true
 	|| FQgetisnull(query_result, row, column))
 		column_byte_width = value_len + (column_max_width - FQdspstrlen(formatted_value, FQclientEncodingId(fset.conn)));
 	else
 		column_byte_width = value_len + (column_max_width - FQgetdsplen(query_result, row, column));
 
-	if(fset.popt.topt.format == PRINT_ALIGNED)
+	if (fset.popt.topt.format == PRINT_ALIGNED)
 	{
 		switch(FQftype(query_result, column))
 		{
@@ -226,7 +226,7 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 	result = (char *)malloc(column_byte_width + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
 
 	sprintf(result, format, formatted_value);
-	if(formatted_value != NULL)
+	if (formatted_value != NULL)
 		free(formatted_value);
 
 	return result;
@@ -245,7 +245,7 @@ _formatValue(const FBresult *query_result, int row, int column, const char *valu
 {
 	char *formatted_value;
 
-	if(for_header == false && FQftype(query_result, column) == SQL_DB_KEY)
+	if (for_header == false && FQftype(query_result, column) == SQL_DB_KEY)
 	{
 		char *src = FQformatDbKey(query_result, row, column);
 		formatted_value = (char *)malloc(strlen(src) + 1);
@@ -302,7 +302,7 @@ _getColumnMaxWidth(const FBresult *query_result, int column)
 	int max_width;
 
 	/* Columns containing the RDB$DB_KEY value will always be fixed-width */
-	if(FQftype(query_result, column) == SQL_DB_KEY)
+	if (FQftype(query_result, column) == SQL_DB_KEY)
 	{
 		return FB_DB_KEY_LEN;
 	}
@@ -312,10 +312,10 @@ _getColumnMaxWidth(const FBresult *query_result, int column)
 	/* check if column has null values, and if so check whether the
 	   null display value is wider
 	 */
-	if(FQfhasNull(query_result, column) == true)
+	if (FQfhasNull(query_result, column) == true)
 	{
 		int null_width = strlen(fset.popt.nullPrint);
-		if(null_width > max_width)
+		if (null_width > max_width)
 			max_width = null_width;
 	}
 
@@ -335,13 +335,13 @@ _printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt)
 	/* No tuples returned - no header info available :(
 	   Not sure if there is a work around to get the header info
 	   in this case */
-	if(FQntuples(query_result) == 0)
+	if (FQntuples(query_result) == 0)
 		return;
 
 	/* Print overall table header, if set */
-	if(pqopt->header != NULL)
+	if (pqopt->header != NULL)
 	{
-		if(pqopt->topt.format == PRINT_ALIGNED)
+		if (pqopt->topt.format == PRINT_ALIGNED)
 		{
 			int width = 0;
 			char format[32];
@@ -373,7 +373,7 @@ _printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt)
 		char *column_name = FQfname(query_result, i);
 		char *column_name_lc = NULL;
 
-		if(i)
+		if (i)
 			printf("%s", pqopt->topt.border_format->divider);
 
 		/* Fold columns to lower case. This will not fold mixed-case columns
@@ -381,7 +381,7 @@ _printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt)
 		   on creation will be converted to lower-case. Not sure if the
 		   API provides any way of detecting whether column names were quoted.
 		 */
-		if(fset.lc_fold == true)
+		if (fset.lc_fold == true)
 		{
 			column_name_lc = (char *)malloc(strlen(column_name) + 1);
 			strcpy(column_name_lc, column_name);
@@ -391,7 +391,7 @@ _printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt)
 				*p = toupper((unsigned char) *p);
 			}
 
-			if(strncmp(column_name_lc, column_name, strlen(column_name)) == 0)
+			if (strncmp(column_name_lc, column_name, strlen(column_name)) == 0)
 			{
 				for(p = column_name_lc; *p; p++)
 				{
@@ -403,18 +403,18 @@ _printTableHeader(const FBresult *query_result, const printQueryOpt *pqopt)
 
 		printf("%s", _formatColumn(query_result, 0, i, column_name, true));
 
-		if(fset.lc_fold == true)
+		if (fset.lc_fold == true)
 			free(column_name_lc);
 	}
 
 	puts("");
 
 	/* print column header underline (PRINT_ALIGNED mode only) */
-	if(pqopt->topt.format == PRINT_ALIGNED)
+	if (pqopt->topt.format == PRINT_ALIGNED)
 	{
 		for(i = 0; i < FQnfields(query_result); i++)
 		{
-			if(i)
+			if (i)
 				printf("%s", pqopt->topt.border_format->junction);
 
 			printf("%s", _formatColumnHeaderUnderline(query_result, i));

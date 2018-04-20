@@ -663,7 +663,7 @@ complete_from_query(const char *text, int state)
 
 		query = malloc(strlen(completion_charp) * 2 + 1);
 
-		if(completion_info_charp != NULL)
+		if (completion_info_charp != NULL)
 		{
 			sprintf(query, completion_charp, string_length, text, completion_info_charp);
 		}

@@ -147,7 +147,7 @@ init_settings(void)
 	fset.autocommit = true;
 
 /* provisional sane default value */
-	fset.client_encoding = "UTF-8";
+	fset.client_encoding = "UTF8";
 	fset.popt.nullPrint = strdup("NULL");
 	fset.popt.header = NULL;
 
