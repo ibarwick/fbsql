@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 
-AC_INIT([fbsql], [0.1.4], [barwick@sql-info.de])
+AC_INIT([fbsql], [0.2.0], [barwick@gmail.com])
 
 AC_CONFIG_AUX_DIR([config])
 

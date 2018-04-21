@@ -4,7 +4,7 @@ fbsql - a command-line client for Firebird
 `fbsql` is a simple command-line client for the Firebird database, inspired
 by PostgreSQL's `psql`. It is very much a proof-of-concept serving primarily
 as a testbed for `libfq` (itself an experimental partial port of PostgreSQL's
-`libpq` ).
+`libpq` created to facilitate the development of `firebird_fdw`).
 
 fbsql provides some advantages over Firebird's native client `isql`,
 including:
@@ -70,8 +70,8 @@ recognized.
 After connecting to Firebird, queries can be executed. Enter `help` for some
 very basic help, or `\?` for details on available slash commands:
 
-    fbsql 0.1.4
-    Connected to Firebird v2.5.7 (libfq version 0.1.5dev)
+    fbsql 0.2.0
+    Connected to Firebird v2.5.7 (libfq version 0.2.0)
     SQL> \?
     General
       \copyright             Show fbsql copyright information
