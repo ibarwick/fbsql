@@ -9,7 +9,8 @@ Group: Productivity/Databases/Tools
 Packager: Ian Barwick
 BuildRequires: firebird-devel
 BuildRequires: libfq
-BuildRequires: readline-devel-6
+BuildRequires: readline-devel
+BuildRequires: flex
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 Requires: libfq
 
