@@ -24,11 +24,18 @@ however it is not possible to switch encoding during a session.
 Installation
 ------------
 
-`fbsql` requires `libfq` ( https://github.com/ibarwick/libfq ) and both
-require the Firebird client library and header files. It also requires
-`libreadline`.
+RPM packages for CentOS 6/7 are available via the Fedora "copr" build system;
+for details see here: <https://copr.fedorainfracloud.org/coprs/ibarwick/libfq/>
 
-The usual:
+`fbsql` requires the Firebird C API wrapper `libfq`; RPM packages are also
+available (see the [libfq GitHub page](https://github.com/ibarwick/libfq)
+for details.
+
+If installing from source, as well as `fbsql`, the Firebird client library
+and header files are required. Dev packages for `libreadline` must also be
+present.
+
+Build with the usual:
 
     ./configure
     make install
@@ -38,7 +45,6 @@ You may need to specify the location of `ibase.h` in `CFLAGS`.
 
 Usage
 -----
-
 
     $ fbsql --help
     fbsql is an interactive terminal for Firebird.
@@ -62,7 +68,7 @@ Usage
 
 e.g.:
 
-    fbsql -d localhost:/srv/firebird/employee.fdb -u sysdba -p masterke
+    fbsql -d localhost:employee.fdb -u sysdba -p masterke
 
 The environment variables `ISC_DATABASE`, `ISC_USER` and `ISC_PASSWORD` are also
 recognized.
@@ -106,6 +112,47 @@ very basic help, or `\?` for details on available slash commands:
     SQL>
 
 
+List all tables:
+
+    SQL> \dt
+                  List of tables
+     Name             | Owner  | Description
+    ------------------+--------+-------------
+     country          | sysdba |
+     customer         | sysdba |
+     department       | sysdba |
+     employee         | sysdba |
+     employee_project | sysdba |
+     job              | sysdba |
+     proj_dept_budget | sysdba |
+     project          | sysdba |
+     salary_history   | sysdba |
+     sales            | sysdba |
+
+
+Get detailed information about a table:
+
+    SQL> \d job
+                                     Table "job"
+     Column          | Field type    | Modifiers | Default value | Description
+    -----------------+---------------+-----------+---------------+-------------
+     job_code        | VARCHAR(5)    | NOT NULL  |               |
+     job_grade       | SMALLINT      | NOT NULL  |               |
+     job_country     | VARCHAR(15)   | NOT NULL  |               |
+     job_title       | VARCHAR(25)   | NOT NULL  |               |
+     min_salary      | NUMERIC(10,2) | NOT NULL  |               |
+     max_salary      | NUMERIC(10,2) | NOT NULL  |               |
+     job_requirement | BLOB          |           |               |
+     language_req    | VARCHAR(15)   |           |               |
+
+    Indexes:
+      rdb$primary2 PRIMARY KEY (job_code, job_grade, job_country)
+      minsalx (job_country, min_salary)
+      maxsalx (job_country, max_salary)
+    Foreign keys:
+      rdb$foreign3 FOREIGN KEY (job_country) REFERENCES country (country) ON UPDATE RESTRICT ON DELETE RESTRICT
+
+
 Limitations
 -----------
 
@@ -116,5 +163,3 @@ Many, in particular:
  - no `BLOB`/`ARRAY` support (due to missing support in `libfq`)
  - does not properly align column data containing non-ASCII characters
  - no configuration file support
-
-
