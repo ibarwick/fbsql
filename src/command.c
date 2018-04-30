@@ -806,8 +806,7 @@ describeTable(char *name)
 	initFQExpBuffer(&buf);
 
 	appendFQExpBuffer(&buf,
-"  SELECT TRIM(LOWER(rf.rdb$field_name))  AS \"Column\", \n"
-        );
+"  SELECT TRIM(LOWER(rf.rdb$field_name))  AS \"Column\", \n");
 
 	appendFQExpBuffer(&buf, _sqlFieldType());
 
@@ -822,8 +821,7 @@ describeTable(char *name)
 "        ON rf.rdb$field_source = f.rdb$field_name\n"
 "     WHERE TRIM(LOWER(rf.rdb$relation_name)) = LOWER('%s')\n"
 "  ORDER BY rf.rdb$field_position\n",
-                    name
-        );
+                    name);
 
 	_describeObject(name, "Table", buf.data);
 
@@ -839,8 +837,7 @@ describeTable(char *name)
 "        ON (rc.rdb$index_name = i.rdb$index_name) \n"
 "     WHERE LOWER(i.rdb$relation_name)='%s' \n"
 "       AND i.rdb$foreign_key IS NULL \n",
-                      name
-		);
+                      name);
 
 	query_result = commandExec(buf.data);
 	termFQExpBuffer(&buf);
@@ -875,6 +872,41 @@ describeTable(char *name)
 				);
 
 			puts("");
+		}
+	}
+
+	FQclear(query_result);
+
+
+	/* List check constraints */
+
+	/* NOTE: requires BLOB support in libfq to actually display definition... */
+	initFQExpBuffer(&buf);
+	appendFQExpBuffer(&buf,
+"     SELECT TRIM(cc.rdb$constraint_name) AS constraint_name, \n"
+"            t.rdb$trigger_source AS source \n"
+"       FROM rdb$relation_constraints rc \n"
+" INNER JOIN rdb$check_constraints cc \n"
+"         ON cc.rdb$constraint_name = rc.rdb$constraint_name \n"
+" INNER JOIN rdb$triggers t \n"
+"         ON t.rdb$trigger_name = cc.rdb$trigger_name \n"
+"      WHERE LOWER(rc.rdb$relation_name) = '%s' \n"
+"        AND t.RDB$TRIGGER_TYPE = 1 \n",
+					  name);
+
+	query_result = commandExec(buf.data);
+	termFQExpBuffer(&buf);
+
+	if (FQresultStatus(query_result) == FBRES_TUPLES_OK && FQntuples(query_result) > 0)
+	{
+		int row = 0;
+
+		printf("Check constraints:\n");
+		for(row = 0; row < FQntuples(query_result); row++)
+		{
+			printf("  \"%s\" %s\n",
+				   FQgetvalue(query_result, row, 0),
+				   FQgetvalue(query_result, row, 1));
 		}
 	}
 
