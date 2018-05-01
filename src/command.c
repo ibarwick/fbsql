@@ -884,14 +884,14 @@ describeTable(char *name)
 	initFQExpBuffer(&buf);
 	appendFQExpBuffer(&buf,
 "     SELECT TRIM(cc.rdb$constraint_name) AS constraint_name, \n"
-"            t.rdb$trigger_source AS source \n"
+"            CAST(t.rdb$trigger_source AS VARCHAR(1000)) AS source \n"
 "       FROM rdb$relation_constraints rc \n"
 " INNER JOIN rdb$check_constraints cc \n"
 "         ON cc.rdb$constraint_name = rc.rdb$constraint_name \n"
 " INNER JOIN rdb$triggers t \n"
 "         ON t.rdb$trigger_name = cc.rdb$trigger_name \n"
 "      WHERE LOWER(rc.rdb$relation_name) = '%s' \n"
-"        AND t.RDB$TRIGGER_TYPE = 1 \n",
+"        AND t.rdb$trigger_type = 1 \n",
 					  name);
 
 	query_result = commandExec(buf.data);
