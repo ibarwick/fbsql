@@ -1,5 +1,8 @@
 Revision history for fbsql
 
+0.2.1	2018-10-??
+	- display BOOLEAN column type (Firebird 3.0 and later)
+
 0.2.0	2018-03-21
 	- improve error message handling and display
 	- adapt for libfq 0.2.0

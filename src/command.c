@@ -1551,6 +1551,7 @@ _sqlFieldType(void)
 "            WHEN 13  THEN 'TIME'\n"
 "            WHEN 35  THEN 'TIMESTAMP'\n"
 "            WHEN 37  THEN 'VARCHAR(' || f.rdb$field_length|| ')'\n"
+"            WHEN 23  THEN 'BOOLEAN' \n"
 "            ELSE 'UNKNOWN'\n"
 "          END AS \"Field type\",\n";
 
