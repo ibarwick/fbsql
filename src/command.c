@@ -1522,7 +1522,11 @@ _sqlFieldType(void)
 {
 	char *sqlFieldType =
 "          CASE f.rdb$field_type\n"
-"            WHEN 261 THEN 'BLOB'\n"
+"            WHEN 261 THEN \n"
+"              CASE f.rdb$field_sub_type \n"
+"                WHEN 1 THEN 'BLOB (TEXT)' \n"
+"                ELSE 'BLOB (BINARY)' \n"
+"              END \n"
 "            WHEN 14  THEN 'CHAR(' || f.rdb$field_length|| ')'\n"
 "            WHEN 40  THEN 'CSTRING'\n"
 "            WHEN 11  THEN 'D_FLOAT'\n"
