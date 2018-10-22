@@ -554,8 +554,9 @@ _wildcard_pattern_clause(char *pattern, char *field, FQExpBufferData *buf)
 	else if (pattern_len && pattern[ pattern_len - 1 ] == '*')
 	{
 		char *like_pattern = malloc(pattern_len);
+		memset(like_pattern, 0, pattern_len);
 
-		strncpy(like_pattern, pattern, pattern_len);
+		strncpy(like_pattern, pattern, pattern_len - 1);
 
 		appendFQExpBuffer(buf,
 						  "			 AND TRIM(LOWER(%s)) LIKE TRIM(LOWER('%s%%'))\n",
