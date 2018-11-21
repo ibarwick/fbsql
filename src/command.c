@@ -32,12 +32,12 @@ static void commandExecPrint(const char *query, const printQueryOpt *pqopt);
 
 static void showUsage(void);
 
-static void describeObject(char *name);
-static void _describeObject(char *name, char *object_type, char *query);
+static void describeObject(char *pattern);
+static void _describeObject(const char *name, char *object_type, char *query);
 
-static void describeTable(char *name);
-static void describeView(char *name);
-static void describeIndex(char *name);
+static void describeTable(const char *name);
+static void describeView(const char *name);
+static void describeIndex(const char *name);
 
 static bool execUtil(char *command);
 static bool _execUtilSetIndexStatistics(void);
@@ -715,62 +715,70 @@ void showUtilOptions(void)
 
 /* \d NAME */
 void
-describeObject(char *name)
+describeObject(char *pattern)
 {
-	char *type_query_tmpl =
-" SELECT 't' AS objtype                                \n"
-"   FROM rdb$relations                                 \n"
-"  WHERE TRIM(LOWER(rdb$relation_name)) = LOWER('%s')  \n"
-"    AND rdb$view_blr IS NULL                          \n"
-"     UNION                                            \n"
-" SELECT 'v' AS objtype                                \n"
-"   FROM rdb$relations                                 \n"
-"  WHERE TRIM(LOWER(rdb$relation_name)) = LOWER('%s')  \n"
-"    AND rdb$view_blr IS NOT NULL                      \n"
-"     UNION                                            \n"
-" SELECT 'i' AS objtype                                \n"
-"   FROM rdb$indices                                   \n"
-"  WHERE TRIM(LOWER(rdb$index_name)) = LOWER('%s')     \n";
+	FQExpBufferData buf;
 
-	char *type_query = malloc(strlen(type_query_tmpl) +
-							  (strlen(name) * 3) +
-							  1);
-
-	char *type;
 	FBresult   *query_result;
+	int i;
 
-	/* get object's type */
+	initFQExpBuffer(&buf);
 
-	sprintf(type_query, type_query_tmpl, name, name, name);
+	appendFQExpBufferStr(&buf,
+						 " SELECT 't' AS objtype, TRIM(LOWER(rdb$relation_name)) AS name \n"
+						 "   FROM rdb$relations \n"
+						 "  WHERE rdb$view_blr IS NULL \n");
 
-	query_result = commandExec(type_query);
+	_wildcard_pattern_clause(pattern, "rdb$relation_name", &buf);
 
-	free(type_query);
+	appendFQExpBufferStr(&buf,
+						 "     UNION \n"
+						 " SELECT 'v' AS objtype, TRIM(LOWER(rdb$relation_name)) AS name \n"
+						 "   FROM rdb$relations \n"
+						 "  WHERE rdb$view_blr IS NOT NULL \n");
+
+	_wildcard_pattern_clause(pattern, "rdb$relation_name", &buf);
+
+	appendFQExpBufferStr(&buf,
+						 "     UNION \n"
+						 " SELECT 'i' AS objtype, TRIM(LOWER(rdb$index_name)) AS name \n"
+						 "   FROM rdb$indices \n"
+						 "  WHERE 1 = 1\n");
+
+	_wildcard_pattern_clause(pattern, "rdb$index_name", &buf);
+
+	query_result = commandExec(buf.data);
+
+	termFQExpBuffer(&buf);
 
 	if (query_result == NULL)
 		return;
 
 	if (FQntuples(query_result) == 0)
 	{
-		printf("No object found\n");
+		printf("No object(s) found\n");
 		return;
 	}
 
-	type = FQgetvalue(query_result, 0, 0);
-
-	switch(type[0])
+	for (i = 0; i < FQntuples(query_result); i++)
 	{
-		case 't':
-			describeTable(name);
-			break;
-		case 'v':
-			describeView(name);
-			break;
-		case 'i':
-			describeIndex(name);
-			break;
-		default:
-			printf("Unknown object type %c\n", type[0]);
+		const char *type = FQgetvalue(query_result, i, 0);
+		const char *name = FQgetvalue(query_result, i, 1);
+
+		switch(type[0])
+		{
+			case 't':
+				describeTable(name);
+				break;
+			case 'v':
+				describeView(name);
+				break;
+			case 'i':
+				describeIndex(name);
+				break;
+			default:
+				printf("Unknown object type %c\n", type[0]);
+		}
 	}
 
 	FQclear(query_result);
@@ -779,7 +787,7 @@ describeObject(char *name)
 
 /* Output object information from query */
 void
-_describeObject(char *name, char *object_type, char *query)
+_describeObject(const char *name, char *object_type, char *query)
 {
 	printQueryOpt pqopt = fset.popt;
 
@@ -800,7 +808,7 @@ _describeObject(char *name, char *object_type, char *query)
  * \d table_name
  */
 void
-describeTable(char *name)
+describeTable(const char *name)
 {
 	FBresult   *query_result;
 	FQExpBufferData buf;
@@ -1057,7 +1065,7 @@ describeTable(char *name)
 
 /* \di */
 void
-describeIndex(char *name)
+describeIndex(const char *name)
 {
 	FBresult   *query_result;
 	FQExpBufferData buf;
@@ -1128,7 +1136,7 @@ describeIndex(char *name)
 
 /* \ds */
 void
-describeSequence(char *name)
+describeSequence(const char *name)
 {
 	puts("\\ds not yet implemented");
 }
@@ -1136,7 +1144,7 @@ describeSequence(char *name)
 
 /* \dv  */
 void
-describeView(char *name)
+describeView(const char *name)
 {
 	FQExpBufferData buf;
 	initFQExpBuffer(&buf);
@@ -1594,6 +1602,10 @@ void
 _command_test(const char *param)
 {
 	struct tm tm;
+
+	if (param == NULL)
+		return;
+
 	if (strptime(param, "%Y-%m-%d_%H:%M:%S", &tm) == NULL)
 		puts("error");
 	else
@@ -1623,6 +1635,7 @@ _command_test_param(char *param)
 	FBresult *query_result;
 
 	const int paramFormats[2] = { 0, -1 };
+
 
 	query_result = FQexec(fset.conn, db_key_sql);
 	FQlog(fset.conn, DEBUG1, "key %s", FQformatDbKey(query_result, 0, 0));
