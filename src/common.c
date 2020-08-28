@@ -141,19 +141,15 @@ fbsql_error(const char *fmt,...)
 void
 init_settings(void)
 {
-	fset.timing = true;
-	fset.quiet = false;
-	fset.lc_fold = true;
-	fset.autocommit = true;
+	fset.conn = NULL;
+	fset.sversion = NULL;
+	fset.dbpath = NULL;
+	fset.username = NULL;
+	fset.password = NULL;
 
-/* provisional sane default value */
+	/* provisional sane default value */
 	fset.client_encoding = "UTF8";
-	fset.popt.nullPrint = strdup("NULL");
-	fset.popt.header = NULL;
-
-	fset.popt.topt.format = PRINT_ALIGNED;
-	fset.popt.topt.border = BORDER_MINIMAL;
-	fset.popt.topt.border_format = _getBorderFormat();
+	fset.client_encoding_id = -1;
 
 	/* TODO: add sanity checking and fallbacks */
 	fset.home_path = get_home_path();
@@ -168,9 +164,21 @@ init_settings(void)
 		puts("init_settings(): unable to get home directory");
 	}
 
-	fset.histcontrol = hctl_ignoreboth;
+	fset.timing = true;
+	fset.quiet = false;
+	fset.lc_fold = true;
 	fset.echo_hidden = false;
+	fset.autocommit = true;
 	fset.plan_display = PLAN_DISPLAY_OFF;
+
+	fset.popt.nullPrint = strdup("NULL");
+	fset.popt.header = NULL;
+
+	fset.popt.topt.format = PRINT_ALIGNED;
+	fset.popt.topt.border = BORDER_MINIMAL;
+	fset.popt.topt.border_format = _getBorderFormat();
+
+	fset.histcontrol = hctl_ignoreboth;
 }
 
 

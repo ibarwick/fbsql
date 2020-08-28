@@ -48,6 +48,7 @@ main(int argc, char *argv[])
 	int result;
 	const char *kw[5];
 	const char *val[5];
+	int i = 0;
 
 	init_settings();
 
@@ -80,27 +81,31 @@ main(int argc, char *argv[])
 		}
 	}
 
-	kw[0] = "db_path";
-	val[0] = fset.dbpath;
+	kw[i] = "db_path";
+	val[i] = fset.dbpath;
+	i++;
 
-	kw[1] = "user";
-	val[1] = fset.username;
+	kw[i] = "user";
+	val[i] = fset.username;
+	i++;
 
-	kw[2] = "password";
-	val[2] = fset.password;
+	kw[i] = "password";
+	val[i] = fset.password;
+	i++;
 
-	kw[3] = "client_encoding";
-	val[3] = fset.client_encoding;
+	kw[i] = "client_encoding";
+	val[i] = fset.client_encoding;
+	i++;
 
-	kw[4] = NULL;
-	val[4] = NULL;
+	kw[i] = NULL;
+	val[i] = NULL;
 
 	fset.conn = FQconnectdbParams(kw, val);
 
 	if (FQstatus(fset.conn) == CONNECTION_BAD)
 	{
 		printf("Error connecting to '%s' as '%s'\n", fset.dbpath, fset.username);
-
+		printf("%s\n", FQerrorMessage(fset.conn));
 		exit(1);
 	}
 
