@@ -89,7 +89,7 @@ very basic help, or `\?` for details on available slash commands:
       \format OPTION [VALUE] Set or show table output formatting option:
                                {alignment|border|null}
       \plan [SETTING]        Display plan {off|on|only} (currently off)
-      \timing                Toggle excution timing (currently on)
+      \timing                Toggle execution timing (currently on)
 
     Environment
       \activity              Show information about current database activity

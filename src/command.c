@@ -675,7 +675,7 @@ showUsage(void)
 	printf("                           {alignment|border|null}\n");
 	printf("  \\plan [SETTING]        Display plan {off|on|only} (currently %s)\n",
            render_plan_display(fset.plan_display));
-	printf("  \\timing                Toggle excution timing (currently %s)\n",
+	printf("  \\timing                Toggle execution timing (currently %s)\n",
            fset.timing ? "on" : "off");
 	printf("\n");
 
