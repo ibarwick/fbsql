@@ -10,3 +10,5 @@ fbsql
 /config.log
 /config.status
 Makefile
+cov-int/
+fbsql.tgz
