@@ -73,6 +73,10 @@ e.g.:
 The environment variables `ISC_DATABASE`, `ISC_USER` and `ISC_PASSWORD` are also
 recognized.
 
+A non-default port can be provided as part of the connection string, e.g.
+
+    fbsql -d localhost/3051:employee.fdb -u sysdba -p masterke
+
 After connecting to Firebird, queries can be executed. Enter `help` for some
 very basic help, or `\?` for details on available slash commands:
 
@@ -158,6 +162,8 @@ Limitations
 
 Many, in particular:
 
+ - folds all object names to lower case by default and does not properly
+   handle object names with mixed-case
  - command terminator is limited to a semicolon; it is currently not possible
    to create functions/procedures with `fbsql`
  - no `BLOB`/`ARRAY` support (due to missing support in `libfq`)
