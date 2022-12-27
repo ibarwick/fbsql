@@ -29,4 +29,11 @@ do_format(const char *param,
 		  printQueryOpt *popt,
 		  bool quiet);
 
+/*
+ * For ad-hoc code testing
+ */
+extern void _command_test(const char *param);
+extern void _command_test_param(char *param);
+extern void _command_test_ins(void);
+
 #endif   /* COMMAND_H */
