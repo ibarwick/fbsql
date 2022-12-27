@@ -74,7 +74,7 @@ commandExec(const char *query)
 	if (fset.echo_hidden == true)
 		printf("%s\n", query);
 
-	return FQexecTransaction(fset.conn, query);
+	return FQexec(fset.conn, query);
 }
 
 
@@ -821,8 +821,11 @@ describeTable(const char *name)
 
 	appendFQExpBuffer(&buf,
 "         CASE WHEN rf.rdb$null_flag <> 0 THEN TRIM('NOT NULL') ELSE '' END AS \"Modifiers\", \n"
-"         COALESCE(CAST(rf.rdb$default_source AS VARCHAR(80)), '') \n"
-"           AS \"Default value\", \n"
+"         CASE \n"
+"           WHEN rf.rdb$default_source IS NOT NULL THEN rf.rdb$default_source \n"
+"           WHEN f.rdb$computed_source IS NOT NULL THEN f.rdb$computed_source \n"
+"           ELSE '' \n"
+"         END AS \"Default value\", \n"
 "         COALESCE(CAST(rf.rdb$description AS VARCHAR(80)), '') \n"
 "           AS \"Description\" \n"
 "      FROM rdb$relation_fields rf \n"
@@ -1577,11 +1580,35 @@ _command_test_ins()
 {
 	FBresult	  *result;
 	const char *paramValues[2];
+	const char *paramValues2[2];
 
 	paramValues[0] = "99";
 	paramValues[1] = "2041/01/01 01:14:33.1234";
-	//paramValues[2] = NULL;
 
+	paramValues2[0] = "1";
+	paramValues2[1] = "2022/02/22 22:22:22.2222";
+
+/*	result = FQprepare(fset.conn,
+							 "INSERT INTO ts_test (id, ts) VALUES(?,?)",
+							 2);
+
+	result = FQexecPrepared(fset.conn,
+							result,
+							2,
+							NULL,
+							paramValues,
+							NULL,
+							NULL,
+							0);
+	result = FQexecParamsPrepared(fset.conn,
+								  result,
+								  2,
+								  NULL,
+								  paramValues2,
+								  NULL,
+								  NULL,
+								  0);*/
+	/*
 	result = FQexecParams(
 		fset.conn,
 		"INSERT INTO ts_test (id, ts) VALUES(?,?)",
@@ -1593,7 +1620,9 @@ _command_test_ins()
 		paramValues,
 		NULL,
 		NULL,
-		0);
+		0);*/
+
+	FQclear(result);
 }
 
 
