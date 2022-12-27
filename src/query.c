@@ -18,7 +18,7 @@
 #include "query.h"
 #include "settings.h"
 
-
+#define SPRINTF_FORMAT_LEN 32
 
 
 static char *
@@ -178,7 +178,7 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 	int value_len, column_byte_width, column_max_width;
 	char *result;
 	char *formatted_value;
-	char format[32];
+	char format[SPRINTF_FORMAT_LEN];
 
 	formatted_value = _formatValue(query_result, row, column, value, for_header);
 
@@ -205,22 +205,26 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 			case SQL_FLOAT:
 			case SQL_DOUBLE:
 				/* right-justify numbers */
-				sprintf(format,"%s%%%is%s",
-						fset.popt.topt.border_format->padding ? " " : "",
-						column_max_width,
-						fset.popt.topt.border_format->padding ? " " : "");
+				snprintf(format,
+						 SPRINTF_FORMAT_LEN,
+						 "%s%%%is%s",
+						 fset.popt.topt.border_format->padding ? " " : "",
+						 column_max_width,
+						 fset.popt.topt.border_format->padding ? " " : "");
 				break;
 
 			default:
-				sprintf(format,"%s%%-%is%s",
-						fset.popt.topt.border_format->padding ? " " : "",
-						column_byte_width,
-						fset.popt.topt.border_format->padding ? " " : "");
+				snprintf(format,
+						 SPRINTF_FORMAT_LEN,
+						 "%s%%-%is%s",
+						 fset.popt.topt.border_format->padding ? " " : "",
+						 column_byte_width,
+						 fset.popt.topt.border_format->padding ? " " : "");
 		}
 	}
 	else
 	{
-		sprintf(format,"%%s");
+		snprintf(format, SPRINTF_FORMAT_LEN, "%%s");
 	}
 
 	result = (char *)malloc(column_byte_width + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
