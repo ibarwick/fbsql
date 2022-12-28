@@ -50,8 +50,6 @@ SendQuery(const char *query)
 	query_time	before, after;
 	double		elapsed_msec = 0;
 
-	char *expbuffer;
-
 	if (fset.timing)
 		gettimeofday(&before, NULL);
 
@@ -78,7 +76,7 @@ SendQuery(const char *query)
 
 			if (fset.plan_display != PLAN_DISPLAY_OFF)
 			{
-				expbuffer = FQexplainStatement(fset.conn, query);
+				char *expbuffer = FQexplainStatement(fset.conn, query);
 				if (expbuffer != NULL)
 				{
 					puts(expbuffer);
