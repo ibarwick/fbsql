@@ -551,10 +551,11 @@ _wildcard_pattern_clause(char *pattern, char *field, FQExpBufferData *buf)
 	}
 	else if (pattern_len && pattern[ pattern_len - 1 ] == '*')
 	{
+		/* convert "something*" into "something%" */
 		char *like_pattern = malloc(pattern_len);
 		memset(like_pattern, 0, pattern_len);
 
-		strncpy(like_pattern, pattern, pattern_len - 1);
+		memcpy(like_pattern, pattern, pattern_len - 1);
 
 		appendFQExpBuffer(buf,
 						  "			 AND TRIM(LOWER(%s)) LIKE TRIM(LOWER('%s%%'))\n",
@@ -1481,6 +1482,7 @@ _listIndexSegments(char *index_name)
 {
 	FBresult   *query_result;
 	FQExpBufferData buf;
+	int result_len;
 	char *result;
 
 	initFQExpBuffer(&buf);
@@ -1514,8 +1516,12 @@ _listIndexSegments(char *index_name)
 
 	FQclear(query_result);
 
-	result = malloc(strlen(buf.data) + 1);
-	strncpy(result, buf.data, strlen(buf.data) + 1);
+	result_len = strlen(buf.data) + 1;
+
+	result = (char *)malloc(result_len);
+	memset(result, '\0', result_len);
+	memcpy(result, buf.data, result_len);
+
 	termFQExpBuffer(&buf);
 
 	return result;

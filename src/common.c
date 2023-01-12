@@ -87,13 +87,17 @@ get_home_path()
 	char		  pwdbuf[1024];
 	struct passwd pwdstr;
 	struct passwd *pwd = NULL;
+	int home_path_len;
 	char *home_path;
 
 	if (getpwuid_r(geteuid(), &pwdstr, pwdbuf, sizeof(pwdbuf), &pwd) != 0)
 		return NULL;
 
-	home_path = (char *)malloc(strlen(pwd->pw_dir) + 1);
-	strncpy(home_path, pwd->pw_dir, strlen(pwd->pw_dir) + 1);
+	home_path_len = strlen(pwd->pw_dir) + 1;
+	home_path = (char *)malloc(home_path_len);
+	memset(home_path, '\0', home_path_len);
+	memcpy(home_path, pwd->pw_dir, home_path_len);
+
 	return home_path;
 }
 
