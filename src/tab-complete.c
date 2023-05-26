@@ -196,7 +196,7 @@ do { \
 } while (0)
 
 /* word break characters */
-#define WORD_BREAKS     "\t\n@$><=;|&{() "
+#define WORD_BREAKS     "\t\n@><=;|&{() "
 
 
 /**

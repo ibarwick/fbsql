@@ -103,7 +103,7 @@ am_fbsql_OBJECTS = main.$(OBJEXT) common.$(OBJEXT) input.$(OBJEXT) \
 	command_test.$(OBJEXT) query.$(OBJEXT) strlcpy.$(OBJEXT) \
 	pgstrcasecmp.$(OBJEXT) fbsqlscan.$(OBJEXT)
 fbsql_OBJECTS = $(am_fbsql_OBJECTS)
-fbsql_LDADD = $(LDADD)
+fbsql_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -272,7 +272,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 fbsql_SOURCES = main.c common.c input.c inputloop.c tab-complete.c command.c command_test.c query.c port/strlcpy.c port/pgstrcasecmp.c fbsqlscan.l
-AM_LDFLAGS = -lfq -lfbclient -lreadline -lm
+fbsql_LDADD = -lfq -lfbclient -lreadline -lm
 AM_CPPFLAGS = -I$(ibase) -I$(readline)
 all: all-am
 
