@@ -35,6 +35,11 @@ If installing from source, as well as `fbsql`, the Firebird client library
 and header files are required. Dev packages for `libreadline` must also be
 present.
 
+Ubintu/Debian packages
+* `libreadline-dev`
+* `flex`
+* `bison`
+
 Build with the usual:
 
     ./configure
