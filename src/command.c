@@ -5,9 +5,9 @@
  * Handle slash commands
  *
  * useful links:
- *   http://www.alberton.info/firebird_sql_meta_info.html
- *   http://ibexpert.net/ibe/index.php?n=Doc.SystemObjects
- *   http://edn.embarcadero.com/article/25259
+ *   https://alberton.info/firebird_sql_meta_info.html
+ *   https://www.ibexpert.net/ibe/index.php?n=Doc.SystemObjects
+ *   http://web.archive.org/web/20180501021907/http://edn.embarcadero.com/article/25259
  *
  * ---------------------------------------------------------------------
  */

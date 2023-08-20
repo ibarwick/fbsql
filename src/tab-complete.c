@@ -331,6 +331,7 @@ fbsql_completion(char *text, int start, int end)
 			 pg_strcasecmp(prev_wd, "ON") == 0)
 	{
 /* http://www.firebirdsql.org/refdocs/langrefupd25-ddl-comment.html */
+/* http://www.firebirdsql.org/file/documentation/html/en/refdocs/fblangref40/firebird-40-language-reference.html#fblangref40-ddl-comment-create */
 		static const char *const list_COMMENT[] =
 			{"DATABASE", "CHARACTER SET", "COLLATION", "COLUMN", "DOMAIN",
 			 "EXCEPTION", "EXTERNAL FUNCTION", "FILTER", "GENERATOR", "INDEX",
