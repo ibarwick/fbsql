@@ -1,9 +1,13 @@
 Revision history for fbsql
 
-0.2.1	2018-11-??
+0.2.1	2023-??-??
 	- display BOOLEAN column type (Firebird 3.0 and later)
 	- fix wildcard pattern matching in \d commands
-	- display BLOB subtype in column description
+	- \d table: display BLOB subtype in column description
+	- \d table: display column character set, if available
+	- \d table: show generated column information
+	- \d table: display constraint definitions
+	- \activity: improve output
 
 0.2.0	2018-03-21
 	- improve error message handling and display
