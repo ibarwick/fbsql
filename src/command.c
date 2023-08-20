@@ -819,6 +819,7 @@ describeTable(const char *name)
 	appendFQExpBuffer(&buf, _sqlFieldType());
 
 	appendFQExpBuffer(&buf,
+"         CASE WHEN f.rdb$character_set_id IS NOT NULL THEN TRIM(cs.rdb$character_set_name) ELSE '' END AS \"Character set\", \n"
 "         CASE WHEN rf.rdb$null_flag <> 0 THEN TRIM('NOT NULL') ELSE '' END AS \"Modifiers\", \n"
 "         CASE \n"
 "           WHEN rf.rdb$default_source IS NOT NULL THEN rf.rdb$default_source \n"
@@ -829,7 +830,9 @@ describeTable(const char *name)
 "           AS \"Description\" \n"
 "      FROM rdb$relation_fields rf \n"
 " LEFT JOIN rdb$fields f \n"
-"        ON rf.rdb$field_source = f.rdb$field_name\n"
+"        ON rf.rdb$field_source = f.rdb$field_name \n"
+" LEFT JOIN rdb$character_sets cs \n"
+"        ON f.rdb$character_set_id = cs.rdb$character_set_id \n"
 "     WHERE TRIM(LOWER(rf.rdb$relation_name)) = LOWER('%s')\n"
 "  ORDER BY rf.rdb$field_position\n",
                     name);
