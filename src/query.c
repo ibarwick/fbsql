@@ -200,6 +200,10 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 			case SQL_SHORT:
 			case SQL_LONG:
 			case SQL_INT64:
+#if defined SQL_INT128
+			/* Firebird 4.0 and later */
+			case SQL_INT128:
+#endif
 			case SQL_FLOAT:
 			case SQL_DOUBLE:
 				/* right-justify numbers */

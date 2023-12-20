@@ -2,6 +2,7 @@ Revision history for fbsql
 
 0.2.1	2023-??-??
 	- display BOOLEAN column type (Firebird 3.0 and later)
+	- add support for SQL128 data type (Firebird 4.0 and later)
 	- fix wildcard pattern matching in \d commands
 	- \d table: display BLOB subtype in column description
 	- \d table: display column character set, if available
