@@ -102,12 +102,6 @@ SendQuery(const char *query)
 			puts("Unexpected result code");
 	}
 
-	/*if (fset.conn->trans == 0L)
-		puts("no transaction");
-	else
-	puts("in transaction");*/
-
-
 	FQclear(query_result);
 
 	if (fset.timing)

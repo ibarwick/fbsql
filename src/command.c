@@ -193,14 +193,14 @@ execSlashCommand(const char *cmd,
 		{
 			fset.autocommit = false;
 			if (fset.conn)
-				fset.conn->autocommit = false;
+				FQsetAutocommit(fset.conn, false);
 			puts("Autocommit off");
 		}
 		else
 		{
 			fset.autocommit = true;
 			if (fset.conn)
-				fset.conn->autocommit = true;
+				FQsetAutocommit(fset.conn, true);
 			puts("Autocommit on");
 		}
 	}

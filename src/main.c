@@ -121,7 +121,7 @@ main(int argc, char *argv[])
 
 	save_history(fset.fbsql_history);
 
-	if (fset.conn->trans != 0L)
+	if (FQisActiveTransaction(fset.conn))
 		puts("Rolling back uncommitted transaction");
 
 	FQfinish(fset.conn);
