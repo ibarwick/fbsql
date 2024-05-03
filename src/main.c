@@ -46,8 +46,8 @@ int
 main(int argc, char *argv[])
 {
 	int result;
-	const char *kw[5];
-	const char *val[5];
+	const char *kw[FBCONN_MAX_PARAMS + 1];
+	const char *val[FBCONN_MAX_PARAMS + 1];
 	int i = 0;
 
 	init_settings();
