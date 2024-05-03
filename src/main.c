@@ -97,6 +97,10 @@ main(int argc, char *argv[])
 	val[i] = fset.client_encoding;
 	i++;
 
+	kw[i] = "client_min_messages";
+	val[i] = "INFO";
+	i++;
+
 	kw[i] = "time_zone_names";
 	val[i] = fset.time_zone_names ? "true" : "false";
 	i++;
@@ -113,8 +117,11 @@ main(int argc, char *argv[])
 		exit(1);
 	}
 
+	FQsetClientMinMessages(fset.conn, INFO);
 	fset.sversion = FQserverVersionString(fset.conn);
 	fset.client_encoding_id = FQclientEncodingId(fset.conn);
+
+
 	FQsetGetdsplen(fset.conn, true);
 
 	printf("Connected to Firebird v%s (libfq version %s)\n", fset.sversion, FQlibVersionString());

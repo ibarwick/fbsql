@@ -230,22 +230,6 @@ execSlashCommand(const char *cmd,
 			printf("You are currently connected as user '%s' to '%s'\n", fset.username, fset.dbpath);
 		}
 	}
-	/* \tznames -- toggle display of time zone names */
-	else if (strncmp(cmd, "tznames", 7) == 0)
-	{
-		if (fset.time_zone_names == true)
-		{
-			fset.time_zone_names = false;
-			FQsetTimeZoneNames(fset.conn, false);
-			puts("Time zone names off");
-		}
-		else
-		{
-			fset.time_zone_names = true;
-			FQsetTimeZoneNames(fset.conn, true);
-			puts("Time zone names  on");
-		}
-	}
 
 	/* \df - describe functions */
 	else if (strncmp(cmd, "df", 2) == 0)
@@ -259,7 +243,6 @@ execSlashCommand(const char *cmd,
 	}
 
 	/* \di - describe indexes */
-
 	else if (strncmp(cmd, "di", 2) == 0)
 	{
 
@@ -342,6 +325,33 @@ execSlashCommand(const char *cmd,
 		status = FBSQL_CMD_SEND;
 	}
 
+	/* \loglevel */
+	else if (strncmp(cmd, "loglevel", 8) == 0)
+	{
+		char *opt0 = fbsql_scan_slash_option(scan_state,
+											 OT_NORMAL, NULL, false);
+
+		if (opt0)
+		{
+			int res = FQsetClientMinMessagesString(fset.conn, opt0);
+
+			if (res == FQ_SET_NO_DB)
+				puts("Database not available");
+			else if (res == FQ_SET_ERROR)
+				printf("Unknown loglevel \"%s\"\n", opt0);
+			else
+				printf("loglevel changed to \"%s\"\n", opt0);
+		}
+		else
+		{
+			const char *client_min_messages = FQparameterStatus(fset.conn, "client_min_messages");
+			if (client_min_messages)
+				printf("%s\n", client_min_messages);
+			else
+				puts("unable to extract loglevel");
+		}
+	}
+
 	/* \l - list database info */
 	else if (strncmp(cmd, "l", 1) == 0)
 	{
@@ -400,6 +410,24 @@ execSlashCommand(const char *cmd,
 			printf("Timing off\n");
 		}
 	}
+
+	/* \tznames -- toggle display of time zone names */
+	else if (strncmp(cmd, "tznames", 7) == 0)
+	{
+		if (fset.time_zone_names == true)
+		{
+			fset.time_zone_names = false;
+			FQsetTimeZoneNames(fset.conn, false);
+			puts("Time zone names off");
+		}
+		else
+		{
+			fset.time_zone_names = true;
+			FQsetTimeZoneNames(fset.conn, true);
+			puts("Time zone names  on");
+		}
+	}
+
 	/* \util - perform various utility functions */
 	else if (strncmp(cmd, "util", 4) == 0)
 	{
@@ -692,6 +720,8 @@ showUsage(void)
            render_plan_display(fset.plan_display));
 	printf("  \\timing                Toggle execution timing (currently %s)\n",
            fset.timing ? "on" : "off");
+	printf("  \\loglevel              Set or display libfq log level\n");
+
 	printf("  \\tznames               Toggle display of time zone names (currently %s)\n",
            fset.time_zone_names ? "on" : "off");
 	printf("\n");

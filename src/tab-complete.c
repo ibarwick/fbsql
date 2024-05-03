@@ -244,6 +244,7 @@ fbsql_completion(char *text, int start, int end)
 		"\\d", "\\df", "\\di", "\\dp", "\\ds", "\\dt", "\\du", "\\dv",
 		"\\format",
 		"\\l",
+		"\\loglevel",
 		"\\plan",
 		"\\q",
 		"\\set",
