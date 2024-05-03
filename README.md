@@ -80,8 +80,8 @@ A non-default port can be provided as part of the connection string, e.g.
 After connecting to Firebird, queries can be executed. Enter `help` for some
 very basic help, or `\?` for details on available slash commands:
 
-    fbsql 0.2.0
-    Connected to Firebird v2.5.7 (libfq version 0.2.0)
+    fbsql 0.3.0
+    Connected to Firebird v4.0.1 (libfq version 0.6.0)
     SQL> \?
     General
       \copyright             Show fbsql copyright information
@@ -94,6 +94,7 @@ very basic help, or `\?` for details on available slash commands:
                                {alignment|border|null}
       \plan [SETTING]        Display plan {off|on|only} (currently off)
       \timing                Toggle execution timing (currently on)
+      \tznames               Toggle display of time zone names (currently on)
 
     Environment
       \activity              Show information about current database activity
@@ -113,7 +114,6 @@ very basic help, or `\?` for details on available slash commands:
       \dv     [PATTERN]      List information about views matching [PATTERN]
       \util   [COMMAND]      execute utility command
                                 {set_index_statistics}
-    SQL>
 
 
 List all tables:
