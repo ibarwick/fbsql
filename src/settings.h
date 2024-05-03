@@ -72,6 +72,7 @@ typedef struct _fbsqlSettings
 	char			 *password;
 	char			 *client_encoding;
 	int				  client_encoding_id; /* corresponds to MON$ATTACHMENTS.MON$CHARACTER_SET_ID */
+	bool			  time_zone_names;    /* instructs libfq to display time zone names if available */
 	char			 *home_path;
 	char			 *fbsql_history;
 	printQueryOpt	  popt;

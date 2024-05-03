@@ -155,6 +155,9 @@ init_settings(void)
 	fset.client_encoding = "UTF8";
 	fset.client_encoding_id = -1;
 
+	/* libfq 0.6.0 and later */
+	fset.time_zone_names = true;
+
 	/* TODO: add sanity checking and fallbacks */
 	fset.home_path = get_home_path();
 

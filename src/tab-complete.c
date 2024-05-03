@@ -248,6 +248,7 @@ fbsql_completion(char *text, int start, int end)
 		"\\q",
 		"\\set",
 		"\\timing",
+		"\\tznames",
 		"\\util",
 		NULL
 	};

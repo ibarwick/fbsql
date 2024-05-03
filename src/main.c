@@ -45,10 +45,10 @@ static void show_version(void);
 int
 main(int argc, char *argv[])
 {
-	int result;
 	const char *kw[FBCONN_MAX_PARAMS + 1];
 	const char *val[FBCONN_MAX_PARAMS + 1];
 	int i = 0;
+	int result;
 
 	init_settings();
 
@@ -95,6 +95,10 @@ main(int argc, char *argv[])
 
 	kw[i] = "client_encoding";
 	val[i] = fset.client_encoding;
+	i++;
+
+	kw[i] = "time_zone_names";
+	val[i] = fset.time_zone_names ? "true" : "false";
 	i++;
 
 	kw[i] = NULL;

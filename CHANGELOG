@@ -3,12 +3,15 @@ Revision history for fbsql
 0.2.1	2023-??-??
 	- display BOOLEAN column type (Firebird 3.0 and later)
 	- add support for SQL128 data type (Firebird 4.0 and later)
+	- add support or TIME[STAMP] WITH TIME ZONE data types (Firebird 4.0 and later)
 	- fix wildcard pattern matching in \d commands
 	- \d table: display BLOB subtype in column description
 	- \d table: display column character set, if available
 	- \d table: show generated column information
 	- \d table: display constraint definitions
 	- \activity: improve output
+	- add \tznames command to toggle display of time zone names, where these
+	  were specified for a TIME[STAMP] WITH TIME ZONE value
 
 0.2.0	2018-03-21
 	- improve error message handling and display

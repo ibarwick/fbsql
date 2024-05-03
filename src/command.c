@@ -230,6 +230,22 @@ execSlashCommand(const char *cmd,
 			printf("You are currently connected as user '%s' to '%s'\n", fset.username, fset.dbpath);
 		}
 	}
+	/* \tznames -- toggle display of time zone names */
+	else if (strncmp(cmd, "tznames", 7) == 0)
+	{
+		if (fset.time_zone_names == true)
+		{
+			fset.time_zone_names = false;
+			FQsetTimeZoneNames(fset.conn, false);
+			puts("Time zone names off");
+		}
+		else
+		{
+			fset.time_zone_names = true;
+			FQsetTimeZoneNames(fset.conn, true);
+			puts("Time zone names  on");
+		}
+	}
 
 	/* \df - describe functions */
 	else if (strncmp(cmd, "df", 2) == 0)
@@ -676,6 +692,8 @@ showUsage(void)
            render_plan_display(fset.plan_display));
 	printf("  \\timing                Toggle execution timing (currently %s)\n",
            fset.timing ? "on" : "off");
+	printf("  \\tznames               Toggle display of time zone names (currently %s)\n",
+           fset.time_zone_names ? "on" : "off");
 	printf("\n");
 
 	printf("Environment\n");
@@ -1572,7 +1590,9 @@ _sqlFieldType(void)
 "              END \n"
 "            WHEN 12  THEN 'DATE'\n"
 "            WHEN 13  THEN 'TIME'\n"
+"            WHEN 28  THEN 'TIME WITH TIME ZONE'\n"
 "            WHEN 35  THEN 'TIMESTAMP'\n"
+"            WHEN 29  THEN 'TIMESTAMP WITH TIME ZONE'\n"
 "            WHEN 37  THEN 'VARCHAR(' || f.rdb$field_length|| ')'\n"
 "            WHEN 23  THEN 'BOOLEAN' \n"
 "            WHEN 26  THEN 'INT128' \n"
