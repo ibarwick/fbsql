@@ -18,6 +18,7 @@
 #include "ibase.h"
 
 #include "libfq.h"
+#include "libfq-version.h"
 
 #include "fbsql.h"
 #include "settings.h"
@@ -105,6 +106,10 @@ main(int argc, char *argv[])
 	val[i] = fset.time_zone_names ? "true" : "false";
 	i++;
 
+	kw[i] = "isql_values";
+	val[i] = "false";
+	i++;
+
 	kw[i] = NULL;
 	val[i] = NULL;
 
@@ -124,7 +129,13 @@ main(int argc, char *argv[])
 
 	FQsetGetdsplen(fset.conn, true);
 
-	printf("Connected to Firebird v%s (libfq version %s)\n", fset.sversion, FQlibVersionString());
+#if LIBFQ_VERSION_NUMBER >= 700
+	printf("Connected to Firebird v%s (libfq version %s; Firebird API version %i)\n",
+		   fset.sversion, FQlibVersionString(), FQfirebirdApiVersion());
+#else
+	printf("Connected to Firebird v%s (libfq version %s)\n",
+		   fset.sversion, FQlibVersionString());
+#endif
 
 	FQsetAutocommit(fset.conn, fset.autocommit);
 
