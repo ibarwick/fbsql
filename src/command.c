@@ -871,7 +871,7 @@ describeTable(const char *name)
 "         CASE WHEN rf.rdb$null_flag <> 0 THEN TRIM('NOT NULL') ELSE '' END AS \"Modifiers\", \n"
 "         CASE \n"
 "           WHEN rf.rdb$default_source IS NOT NULL THEN rf.rdb$default_source \n"
-"           WHEN f.rdb$computed_source IS NOT NULL THEN f.rdb$computed_source \n"
+"           WHEN f.rdb$computed_source IS NOT NULL THEN 'COMPUTED BY ' || f.rdb$computed_source \n"
 "           ELSE '' \n"
 "         END AS \"Default value\", \n"
 "         COALESCE(CAST(rf.rdb$description AS VARCHAR(80)), '') \n"
