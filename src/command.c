@@ -1485,11 +1485,22 @@ listUsers(void)
 	pqopt.header = "List of users";
 	initFQExpBuffer(&buf);
 
-	appendFQExpBuffer(&buf,
+	if (FQserverVersion(fset.conn) >= 30000)
+	{
+		appendFQExpBuffer(&buf,
+"    SELECT TRIM(sec$user_name) AS \"User\"\n"
+"      FROM	SEC$USERS\n"
+"  ORDER BY 1"
+		);
+	}
+	else
+	{
+		appendFQExpBuffer(&buf,
 "    SELECT DISTINCT TRIM(rdb$user) AS \"User\"\n"
 "      FROM rdb$user_privileges\n"
 "  ORDER BY 1"
 		);
+	}
 
 	commandExecPrint(buf.data, &pqopt);
 
