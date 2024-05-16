@@ -140,19 +140,25 @@ printQuery(const FBresult *query_result, const printQueryOpt *pqopt)
 
 		for(j = 0; j < nfields; j++)
 		{
+			char *formatted_column = NULL;
 
 			if (j)
 				printf("%s", pqopt->topt.border_format->divider);
 
 			if (FQgetisnull(query_result, i, j))
 			{
-				printf("%s", _formatColumn(query_result, i, j, pqopt->nullPrint, false));
+				formatted_column = _formatColumn(query_result, i, j, pqopt->nullPrint, false);
+				printf("%s", formatted_column);
 			}
 			else
 			{
 				char *value = FQgetvalue(query_result, i, j);
-				printf("%s", _formatColumn(query_result, i, j, value, false));
+				formatted_column = _formatColumn(query_result, i, j, value, false);
+				printf("%s", formatted_column);
 			}
+
+			if (formatted_column != NULL)
+				free(formatted_column);
 		}
 		puts("");
 	}
@@ -168,9 +174,11 @@ static char *
 _formatColumn(const FBresult *query_result, int row, int column, char *value, bool for_header)
 {
 	int value_len, column_byte_width, column_max_width;
-	char *result;
+	char *result = NULL;
 	char *formatted_value;
 	char format[SPRINTF_FORMAT_LEN];
+
+	int output_buf_len;
 
 	formatted_value = _formatValue(query_result, row, column, value, for_header);
 
@@ -209,6 +217,9 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 						 fset.popt.topt.border_format->padding ? " " : "");
 				break;
 
+			case SQL_BLOB:
+				snprintf(format, SPRINTF_FORMAT_LEN, "%%s");
+				break;
 			default:
 				snprintf(format,
 						 SPRINTF_FORMAT_LEN,
@@ -223,9 +234,12 @@ _formatColumn(const FBresult *query_result, int row, int column, char *value, bo
 		snprintf(format, SPRINTF_FORMAT_LEN, "%%s");
 	}
 
-	result = (char *)malloc(column_byte_width + (fset.popt.topt.border_format->padding ? 2 : 0) + 1);
+	output_buf_len = (value_len > column_byte_width ? value_len : column_byte_width) + (fset.popt.topt.border_format->padding ? 2 : 0) + 1;
+	result = (char *)malloc(output_buf_len + 1);
 
-	sprintf(result, format, formatted_value);
+	snprintf(result, output_buf_len,
+			 format, formatted_value);
+
 	if (formatted_value != NULL)
 		free(formatted_value);
 
