@@ -427,6 +427,18 @@ fbsql_completion(char *text, int start, int end)
 	else if (pg_strcasecmp(prev_wd, "\\d") == 0)
 		COMPLETE_WITH_QUERY(Query_for_list_of_selectables);
 
+/* \loglevel */
+	else if (pg_strcasecmp(prev_wd, "\\loglevel") == 0)
+	{
+		static const char *const list_LOGLEVEL[] =
+			{
+				"PANIC", "FATAL", "ERROR", "WARNING", "NOTICE", "INFO",
+				"DEBUG1", "DEBUG2",  "DEBUG3",  "DEBUG4",  "DEBUG5",
+				NULL
+			};
+
+		COMPLETE_WITH_LIST_CS(list_LOGLEVEL);
+	}
 /* \plan */
 	else if (pg_strcasecmp(prev_wd, "\\plan") == 0)
 	{
