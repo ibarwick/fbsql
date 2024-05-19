@@ -59,6 +59,9 @@ static void showUtilOptions(void);
 static bool do_plan_display(const char *value);
 static char *render_plan_display(short plan_display);
 
+static bool do_explain_display(const char *value);
+static char *render_explain_display(short explain_display);
+
 static void _wildcard_pattern_clause(char *pattern, char *field, FQExpBufferData *buf);
 static const char *_align2string(enum printFormat in);
 static const char *_border2string(enum borderFormat in);
@@ -358,6 +361,24 @@ execSlashCommand(const char *cmd,
 		listDatabaseInfo();
 	}
 
+	/* \explain - on|off */
+	else if (strcmp(cmd, "explain") == 0)
+	{
+		char *opt0 = fbsql_scan_slash_option(scan_state,
+											 OT_NORMAL, NULL, false);
+
+		if (!opt0)
+		{
+			printf("Explain plan display is currently %s\n", render_explain_display(fset.explain_display));
+		}
+		else
+		{
+			do_explain_display(opt0);
+		}
+
+		free(opt0);
+	}
+
 	/* \plan - on|off|only */
 	else if (strcmp(cmd, "plan") == 0)
 	{
@@ -584,6 +605,43 @@ render_plan_display(short plan_display)
 }
 
 
+bool
+do_explain_display(const char *value)
+{
+	if (strcmp("off", value) == 0)
+	{
+		fset.explain_display = EXPLAIN_DISPLAY_OFF;
+	}
+	else if (strcmp("on", value) == 0)
+	{
+		fset.explain_display = EXPLAIN_DISPLAY_ON;
+	}
+	else
+	{
+		printf("\\explain: allowed options are on, off\n");
+		return false;
+	}
+
+	printf("Explain display is %s\n", render_explain_display(fset.explain_display));
+	return true;
+}
+
+
+static char *
+render_explain_display(short explain_display)
+{
+	switch(explain_display)
+	{
+		case EXPLAIN_DISPLAY_ON:
+			return "on";
+		case EXPLAIN_DISPLAY_OFF:
+			return "off";
+		default:
+			return "unknown";
+	}
+}
+
+
 static void
 _wildcard_pattern_clause(char *pattern, char *field, FQExpBufferData *buf)
 {
@@ -718,6 +776,8 @@ showUsage(void)
 	printf("                           {alignment|border|null}\n");
 	printf("  \\plan [SETTING]        Display plan {off|on|only} (currently %s)\n",
            render_plan_display(fset.plan_display));
+	printf("  \\explain [SETTING]     Display explain XXX {off|on} (currently %s)\n",
+           render_explain_display(fset.explain_display));
 	printf("  \\timing                Toggle execution timing (currently %s)\n",
            fset.timing ? "on" : "off");
 	printf("  \\loglevel              Set or display libfq log level\n");

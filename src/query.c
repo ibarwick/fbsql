@@ -76,6 +76,16 @@ SendQuery(const char *query)
 
 			if (fset.plan_display != PLAN_DISPLAY_OFF)
 			{
+				char *expbuffer = FQplanStatement(fset.conn, query);
+				if (expbuffer != NULL)
+				{
+					puts(expbuffer);
+					free(expbuffer);
+				}
+			}
+
+			if (fset.explain_display == EXPLAIN_DISPLAY_ON)
+			{
 				char *expbuffer = FQexplainStatement(fset.conn, query);
 				if (expbuffer != NULL)
 				{
@@ -83,6 +93,7 @@ SendQuery(const char *query)
 					free(expbuffer);
 				}
 			}
+
 			break;
 
 		case FBRES_COMMAND_OK:

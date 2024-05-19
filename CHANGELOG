@@ -15,6 +15,7 @@ Revision history for fbsql
 	- add \tznames command to toggle display of time zone names, where these
 	  were specified for a TIME[STAMP] WITH TIME ZONE value
 	- add \loglevel command to display or set fbsql log level
+	- add \explain command to display explained query plan
 
 0.2.0	2018-03-21
 	- improve error message handling and display

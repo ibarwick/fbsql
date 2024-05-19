@@ -27,6 +27,12 @@ enum planDisplayOption
 	PLAN_DISPLAY_ONLY
 };
 
+enum explainDisplayOption
+{
+	EXPLAIN_DISPLAY_OFF = 0,
+	EXPLAIN_DISPLAY_ON,
+};
+
 typedef struct printTextFormat
 {
 	/* A complete line style */
@@ -82,6 +88,7 @@ typedef struct _fbsqlSettings
 	bool			  echo_hidden;
 	bool			  autocommit;
 	short			  plan_display;		  /* display query plan? */
+	short			  explain_display;	  /* display explained query plan? */
 	HistControl		  histcontrol;
 } fbsqlSettings;
 

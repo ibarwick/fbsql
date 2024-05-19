@@ -242,6 +242,7 @@ fbsql_completion(char *text, int start, int end)
 		"\\a", "\\activity", "\\autocommit",
 		"\\conninfo", "\\copyright",
 		"\\d", "\\df", "\\di", "\\dp", "\\ds", "\\dt", "\\du", "\\dv",
+		"\\explain",
 		"\\format",
 		"\\l",
 		"\\loglevel",
@@ -427,6 +428,16 @@ fbsql_completion(char *text, int start, int end)
 	else if (pg_strcasecmp(prev_wd, "\\d") == 0)
 		COMPLETE_WITH_QUERY(Query_for_list_of_selectables);
 
+/* \explain */
+	else if (pg_strcasecmp(prev_wd, "\\explain") == 0)
+	{
+		static const char *const list_EXPLAIN[] =
+		{"on", "off", NULL};
+
+		COMPLETE_WITH_LIST_CS(list_EXPLAIN);
+	}
+
+
 /* \loglevel */
 	else if (pg_strcasecmp(prev_wd, "\\loglevel") == 0)
 	{
@@ -439,6 +450,7 @@ fbsql_completion(char *text, int start, int end)
 
 		COMPLETE_WITH_LIST_CS(list_LOGLEVEL);
 	}
+
 /* \plan */
 	else if (pg_strcasecmp(prev_wd, "\\plan") == 0)
 	{
